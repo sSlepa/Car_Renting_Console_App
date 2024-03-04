@@ -17,19 +17,68 @@ typedef struct stock{
 stock Masini[1005];
 int nrMasini;
 
-void load_from_file_car_stock(int *nrMasini,stock Masini[]){
+void admin_help(){
+
+    char pass[26];
+    printf("=== MENIU ADMIN ===\n");
+    int try = 3;
+    int intrat = 0;
+    while(try > 0 && intrat == 0){
+        printf("Introdu parola de administrator (exit pentru a iesi): ");
+        scanf("%s",pass);
+        getchar();
+        if(strcmp(pass,"admin123") == 0){
+            intrat = 1;
+            system("cls");
+            printf("Informatii pentru membrii staff \n");
+            printf("Sintaxa adaugare : NUME | MODEL | AN | DISPONIBIL/INDISPONIBIL | PRET_PER_ZI\n");
+            printf("Se pune 1 singur spatiu intre campurile de completat al masinilor\n");
+            printf("Pentru modele ce sunt compuse din mai multe cuvinte, se folosesc separatori (\"-\",\"_\")\n");
+            printf("Nu aprobati contracte de inchiriere pentru salarii mai mici decat 1200 RON\n");
+            printf("Orice neclaritate raportati la manager\n");
+            printf("Aplicatia este in teste, pot aparea erori. Reporniti daca se blocheaza\n");
+            printf("Nu introduceti date eronate, vor fi sterse si veti fi sanctionati\n\n");
+
+            printf("Folositi \"exit\" pentru a iesi din programe\n\n");
+
+            printf("\n--------------------------\nApasa ESC pentru a iesi...");
+            char tasta = getch();
+
+            while(tasta != 27)
+                tasta = getch();
+            
+            if(tasta == 27)
+                return;
+        
+        }
+        else if(strcmp(pass,"exit") == 0)
+            return;
+        else{
+            printf("Parola gresita\n");
+            printf("Incercari ramase %d\n\n",try - 1);
+        }
+        try--;
+    }
+    if(!intrat){
+        printf("\nParola gresita, se reintoarce la ecran principal in 5 sau mai putine secunde");
+        Sleep(5600);
+    }
+
+}
+
+void load_from_file_car_stock(){
 
     FILE *fp = fopen("masini.txt","r");
     char linie[256];
     char mat[256][256];
-    *nrMasini = 0;
+    nrMasini = 0;
     while(fgets(linie,256,fp) != NULL){
 
         //printf("%s",linie);
-        strcpy(mat[++*nrMasini],linie);
+        strcpy(mat[++nrMasini],linie);
     
     }
-    for(int i = 1 ; i <= *nrMasini ; ++i){
+    for(int i = 1 ; i <= nrMasini ; ++i){
         char *p = strtok(mat[i]," ");
         strcpy(Masini[i].nume,p);
         p = strtok(NULL," ");
@@ -83,19 +132,20 @@ void optiuni(int *pos,int *stopexec,int *next_pos){
 void adauga_veh(){
     
     char newcar[256];
-    printf("Introdu Sintaxa (exit pentru a iesi) : ");
+    printf("Introdu Sintaxa : ");
+
     gets(newcar);
-
-    printf("%s",newcar);
-
+    
     if(strcmp("exit",newcar) == 0)
         return;
     
     else{
+
         FILE *fp = fopen("masini.txt","a");
 
         fprintf(fp,"%s\n",newcar);
         fclose(fp);    
+        
     }
 }
 
@@ -126,18 +176,17 @@ void adaugare_actualizare_stergere(){
         if(nextpage == 1){
             nextpage = 0;
             if(newpointer == 1){
-                newpointer = 1;
+                newpointer = 0;
                 system("cls");
                 adauga_veh();
-                load_from_file_car_stock(&nrMasini,Masini);
-
+                load_from_file_car_stock();
             }
             else if(newpointer == 2){
-                newpointer = 1;
+                newpointer = 0;
                 return;
             }
             else if(newpointer == 3){
-                newpointer = 1;
+                newpointer = 0;
                 return;
             }
         }
@@ -152,6 +201,7 @@ void solve_admin_page(){
     while(try > 0 && intrat == 0){
         printf("Introdu parola de administrator (exit pentru a iesi): ");
         scanf("%s",pass);
+        getchar();
         if(strcmp(pass,"admin123") == 0){
             intrat = 1;
             system("cls");
@@ -180,6 +230,10 @@ void listare_stoc_masini(int nrMasini,stock Masini[]){
     }
     printf("\n--------------------------\nApasa ESC pentru a iesi...");
     char tasta = getch();
+
+    while(tasta != 27)
+        tasta = getch();
+            
     if(tasta == 27)
         return;
 
@@ -190,55 +244,14 @@ void inchiriaza_vehicul(){
 
 }
 
-void admin_help(){
-
-    char pass[26];
-    printf("=== MENIU ADMIN ===\n");
-    int try = 3;
-    int intrat = 0;
-    while(try > 0 && intrat == 0){
-        printf("Introdu parola de administrator (exit pentru a iesi): ");
-        scanf("%s",pass);
-        if(strcmp(pass,"admin123") == 0){
-            intrat = 1;
-            system("cls");
-            printf("Informatii pentru membrii staff \n");
-            printf("Sintaxa adaugare : NUME | MODEL | AN | DISPONIBIL/INDISPONIBIL | PRET_PER_ZI\n");
-            printf("Se pune 1 singur spatiu intre campurile de completat al masinilor\n");
-            printf("Pentru modele ce sunt compuse din mai multe cuvinte, se folosesc separatori (\"-\",\"_\")\n");
-            printf("Nu aprobati contracte de inchiriere pentru salarii mai mici decat 1200 RON\n");
-            printf("Orice neclaritate raportati la manager\n");
-            printf("Aplicatia este in teste, pot aparea erori. Reporniti daca se blocheaza\n");
-            printf("Nu introduceti date eronate, vor fi sterse si veti fi sanctionati\n\n");
-
-            printf("\n--------------------------\nApasa ESC pentru a iesi...");
-            char tasta = getch();
-            if(tasta == 27)
-                return;
-            
-    
-        }
-        else if(strcmp(pass,"exit") == 0)
-            return;
-        else{
-            printf("Parola gresita\n");
-            printf("Incercari ramase %d\n\n",try - 1);
-        }
-        try--;
-    }
-    if(!intrat){
-        printf("\nParola gresita, se reintoarce la ecran principal in 5 sau mai putine secunde");
-        Sleep(5600);
-    }
-
-}
-
 int main(){
+
+    system("cls");
 
     int stopexec = 0;
     int pos = 1,nextpage,previouspage;
 
-    load_from_file_car_stock(&nrMasini,Masini);
+    load_from_file_car_stock();
 
     while(stopexec == 0){  
 
@@ -252,15 +265,10 @@ int main(){
         printf("2. Vizualizare Autoturisme\n");
 
         sageata(pos,3);
-        printf("3. Cautare Autoturism\n");
+        printf("3. Rezervari\n");
 
-        sageata(pos,4);
-        printf("4. Rezervari\n");
-
-        sageata(pos, 5);
-        printf("5. Admin Help [ADMIN ONLY]\n\n");
-
-        
+        sageata(pos, 4);
+        printf("4. Admin Help [ADMIN ONLY]\n\n");
 
         printf("Apasa ESC pentru a iesi");
         
@@ -271,22 +279,22 @@ int main(){
         if(nextpage == 1){
             nextpage = 0;
             if(pos == 1){
-                pos = 1;
+                pos = 0;
                 system("cls");
                 solve_admin_page();
             }
             else if(pos == 2){
-                pos = 1;
+                pos = 0;
                 system("cls");
                 listare_stoc_masini(nrMasini,Masini);
             }
             else if(pos == 3){
-                pos = 1;
+                pos = 0;
                 system("cls");
                 inchiriaza_vehicul();
             }
             else if(pos == 4){
-                pos = 1;
+                pos = 0;
                 system("cls");
                 admin_help();
             }
