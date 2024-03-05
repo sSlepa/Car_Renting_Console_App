@@ -16,6 +16,7 @@ typedef struct stock{
 
 stock Masini[1005];
 int nrMasini;
+int blocheaza_stergere;
 
 void admin_help(){
 
@@ -37,7 +38,9 @@ void admin_help(){
             printf("Nu aprobati contracte de inchiriere pentru salarii mai mici decat 1200 RON\n");
             printf("Orice neclaritate raportati la manager\n");
             printf("Aplicatia este in teste, pot aparea erori. Reporniti daca se blocheaza\n");
+            printf("Parola si PIN-ul de admin se primesc fizic de la manager\n");
             printf("Nu introduceti date eronate, vor fi sterse si veti fi sanctionati\n\n");
+
 
             printf("Folositi \"exit\" pentru a iesi din programe\n\n");
 
@@ -183,7 +186,7 @@ void adaugare_actualizare_stergere(){
             }
             else if(newpointer == 2){
                 newpointer = 0;
-                return;
+                system("cls");
             }
             else if(newpointer == 3){
                 newpointer = 0;
@@ -243,6 +246,60 @@ void inchiriaza_vehicul(){
     return;
 
 }
+void clear_data(){
+
+    char pass[26];
+    printf("=== MENIU ADMIN ===\n");
+    int try = 3;
+    int intrat = 0;
+    while(try > 0 && intrat == 0){
+        printf("Introdu parola de administrator (exit pentru a iesi): ");
+        scanf("%s",pass);
+        getchar();
+        if(strcmp(pass,"admin123") == 0){
+            char ch;
+            system("cls");
+            printf("Sunteti sigur ca doriti eliminarea tuturor datelor din memorie ? (y/n) :");
+            ch = getch();
+            printf("%c",ch);
+            if(ch == 'y'){
+                char pin[25];
+                printf("\nPentru siguranta introduceti codul PIN de admin (1 incercare, daca se gresete aplicatia blocheaza functia): ");
+                scanf("%s",pin);
+                if(strcmp(pin,"0852") == 0){
+                    FILE *fp = fopen("masini.txt","w");
+                    fprintf(fp,"%s","");
+                    printf("Fisierul a fost golit cu succes.\nSe revine la meniul principal in 5 sau mai putine secunde...");
+                    Sleep(5600);
+                    return;
+                }
+                else{
+                    blocheaza_stergere = 1;
+                    printf("PIN gresit, se revine la meniu principal");
+                    Sleep(5600);
+                    return;
+                }
+            }
+            else{
+                printf("\nFunctie anulata, se revine la ecranul principal...");
+                Sleep(5600);
+                return;
+            }
+        }
+        else if(strcmp(pass,"exit") == 0)
+            return;
+        else{
+            printf("Parola gresita\n");
+            printf("Incercari ramase %d\n\n",try - 1);
+        }
+        try--;
+    }
+    if(!intrat){
+        printf("\nParola gresita, se reintoarce la ecran principal in 5 sau mai putine secunde");
+        Sleep(5600);
+    }
+
+}
 
 int main(){
 
@@ -251,28 +308,38 @@ int main(){
     int stopexec = 0;
     int pos = 1,nextpage,previouspage;
 
-    load_from_file_car_stock();
+    FILE *pp = fopen("status_functie_5.txt","r");
+    fscanf(pp,"%d",&blocheaza_stergere);
+    fclose(pp);
 
+    load_from_file_car_stock();
+    
     while(stopexec == 0){  
 
         system("cls");
         printf("=== MENIU PRINCIPAL ===\n");
 
-        sageata(pos, 1);
-        printf("1. Functii Autoturisme [ADMIN ONLY]\n");
+        sageata(pos,1);
+        printf("1. Vizualizare Autoturisme\n");
 
         sageata(pos,2);
-        printf("2. Vizualizare Autoturisme\n");
+        printf("2. Rezervari\n");
 
-        sageata(pos,3);
-        printf("3. Rezervari\n");
+        sageata(pos, 3);
+        printf("3. Functii Autoturisme [ADMIN ONLY]\n");
 
         sageata(pos, 4);
-        printf("4. Admin Help [ADMIN ONLY]\n\n");
+        printf("4. Admin Help [ADMIN ONLY]\n");
+
+        sageata(pos, 5);
+        printf("5. Golire Date [ADMIN ONLY]\n");
+
+        sageata(pos, 6);
+        printf("6. Deblocare aplicatie [ADMIN ONLY]\n\n");
 
         printf("Apasa ESC pentru a iesi");
         
-        loopsageata(&pos,0,5);
+        loopsageata(&pos,0,7);
 
         optiuni(&pos,&stopexec,&nextpage);
 
@@ -281,22 +348,79 @@ int main(){
             if(pos == 1){
                 pos = 0;
                 system("cls");
-                solve_admin_page();
+                listare_stoc_masini(nrMasini,Masini);
+                
             }
             else if(pos == 2){
                 pos = 0;
                 system("cls");
-                listare_stoc_masini(nrMasini,Masini);
+                inchiriaza_vehicul();
             }
             else if(pos == 3){
                 pos = 0;
                 system("cls");
-                inchiriaza_vehicul();
+                solve_admin_page();
             }
             else if(pos == 4){
                 pos = 0;
                 system("cls");
                 admin_help();
+            }
+            else if(pos == 5 && blocheaza_stergere == 0){
+                pos = 0;
+                system("cls");
+                clear_data();
+
+                FILE *pp = fopen("status_functie_5.txt","w");
+                fprintf(pp,"%d",blocheaza_stergere);
+                fclose(pp);
+                
+            }
+            else if(pos == 5 && blocheaza_stergere == 1){
+                pos = 0;
+                system("cls");
+                printf("Functie blocata(PIN gresit)");
+
+                FILE *pp = fopen("status_functie_5.txt","w");
+                fprintf(pp,"%d",blocheaza_stergere);
+                fclose(pp);
+
+                Sleep(1500);
+            }
+            else if(pos == 6 && blocheaza_stergere == 1){
+                pos = 0;
+                system("cls");
+                printf("=== MENIU ADMIN ===\n");
+                printf("Functie destinata supervizorului/managerului pentru a putea debloca anumite functii\n");
+                printf("Introduceti codul PIN (4 cifre / 0000 pentru revenire) :");
+                char PIN[5];
+                int ok = 0;
+                do{
+                    scanf("%s",PIN);
+                    if(strcmp(PIN,"0000") == 0){
+                        printf("Intoarcere la ecran principal...");
+                        Sleep(5600);
+                        ok = 1;
+                    }
+                    else{
+                        if(strcmp(PIN,"1111") == 0){
+                            printf("Functii deblocate!");
+                            FILE *pp = fopen("status_functie_5.txt","w");
+                            fprintf(pp,"%d",0);
+                            blocheaza_stergere = 0;
+                            ok = 1;
+                            Sleep(2000);
+                            
+                        }
+                        else
+                            printf("PIN Gresit. Incearca din nou...\n");
+                        
+                    }
+                }while(ok == 0);
+            }
+            else if(pos == 6 && blocheaza_stergere == 0){
+                printf("Functiile nu sunt blocate");
+                Sleep(2000);
             }
         }
     }
