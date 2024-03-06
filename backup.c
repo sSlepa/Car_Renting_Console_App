@@ -14,6 +14,15 @@ typedef struct stock{
 
 }stock;
 
+typedef struct om{
+
+    char nume[30];
+    char prenume[30];
+    char durata_inchieriere_zile[30];
+    char venit[30];
+
+}om;
+
 stock Masini[1005];
 int nrMasini;
 int blocheaza_stergere;
@@ -39,7 +48,7 @@ void admin_help(){
             printf("Orice neclaritate raportati la manager\n");
             printf("Aplicatia este in teste, pot aparea erori. Reporniti daca se blocheaza\n");
             printf("Parola si PIN-ul de admin se primesc fizic de la manager\n");
-            printf("Nu introduceti date eronate, vor fi sterse si veti fi sanctionati\n\n");
+            printf("Daca introduceti codul PIN gresit sau parola apelati la supervizor pentru deblocare\n\n");
 
 
             printf("Folositi \"exit\" pentru a iesi din programe\n\n");
@@ -135,7 +144,7 @@ void optiuni(int *pos,int *stopexec,int *next_pos){
 void adauga_veh(){
     
     char newcar[256];
-    printf("Introdu Sintaxa : ");
+    printf("Introdu Sintaxa (exit pentru a iesi): ");
 
     gets(newcar);
     
@@ -150,6 +159,19 @@ void adauga_veh(){
         fclose(fp);    
         
     }
+}
+
+void actualizeaza_veh(){
+
+    printf("%s","Se lucreaza");
+    Sleep(2000);
+
+}
+void sterge_veh(){
+
+    printf("%s","Se lucreaza");
+    Sleep(2000);
+
 }
 
 void adaugare_actualizare_stergere(){
@@ -187,10 +209,12 @@ void adaugare_actualizare_stergere(){
             else if(newpointer == 2){
                 newpointer = 0;
                 system("cls");
+                actualizeaza_veh();
             }
             else if(newpointer == 3){
                 newpointer = 0;
-                return;
+                system("cls");
+                sterge_veh();
             }
         }
     }
@@ -199,35 +223,41 @@ void solve_admin_page(){
 
     char pass[26];
     printf("=== MENIU ADMIN ===\n");
-    int try = 3;
-    int intrat = 0;
-    while(try > 0 && intrat == 0){
-        printf("Introdu parola de administrator (exit pentru a iesi): ");
-        scanf("%s",pass);
-        getchar();
-        if(strcmp(pass,"admin123") == 0){
-            intrat = 1;
-            system("cls");
-            adaugare_actualizare_stergere();
+        if(blocheaza_stergere == 0){
+        int try = 3;
+        int intrat = 0;
+        while(try > 0 && intrat == 0){
+            printf("Introdu parola de administrator (exit pentru a iesi): ");
+            scanf("%s",pass);
+            getchar();
+            if(strcmp(pass,"admin123") == 0){
+                intrat = 1;
+                system("cls");
+                adaugare_actualizare_stergere();
+            }
+            else if(strcmp(pass,"exit") == 0)
+                return;
+            else{
+                printf("Parola gresita\n");
+                printf("Incercari ramase %d\n\n",try - 1);
+            }
+            try--;
         }
-        else if(strcmp(pass,"exit") == 0)
-            return;
-        else{
-            printf("Parola gresita\n");
-            printf("Incercari ramase %d\n\n",try - 1);
+        if(!intrat){
+            printf("\nParola gresita, se reintoarce la ecran principal in 5 sau mai putine secunde");
+            Sleep(5600);
         }
-        try--;
     }
-    if(!intrat){
-        printf("\nParola gresita, se reintoarce la ecran principal in 5 sau mai putine secunde");
-        Sleep(5600);
+    else{
+        printf("Functii blocate(PIN Gresit)");
+        Sleep(3500);
     }
-    
+
 }
 void listare_stoc_masini(int nrMasini,stock Masini[]){
 
     for(int i = 1 ; i <= nrMasini ; ++i){
-        printf("%s %s %s %s %s\n",Masini[i].nume,Masini[i].model,Masini[i].an,
+        printf("%d. %s %s %s %s %s\n",i,Masini[i].nume,Masini[i].model,Masini[i].an,
         Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
 
     }
@@ -243,7 +273,8 @@ void listare_stoc_masini(int nrMasini,stock Masini[]){
 }
 void inchiriaza_vehicul(){
 
-    return;
+    printf("%s","Se lucreaza");
+    Sleep(2000);
 
 }
 void clear_data(){
@@ -269,6 +300,7 @@ void clear_data(){
                 if(strcmp(pin,"0852") == 0){
                     FILE *fp = fopen("masini.txt","w");
                     fprintf(fp,"%s","");
+                    load_from_file_car_stock();
                     printf("Fisierul a fost golit cu succes.\nSe revine la meniul principal in 5 sau mai putine secunde...");
                     Sleep(5600);
                     return;
@@ -308,6 +340,14 @@ int main(){
     int stopexec = 0;
     int pos = 1,nextpage,previouspage;
 
+    FILE *check = fopen("status_functie_5.txt","r");
+    if(fgetc(check) == -1){
+        FILE *check2 = fopen("status_functie_5.txt","w");
+        fprintf(check2,"%d",0);
+        fclose(check2);
+        fclose(check);
+    }
+
     FILE *pp = fopen("status_functie_5.txt","r");
     fscanf(pp,"%d",&blocheaza_stergere);
     fclose(pp);
@@ -323,7 +363,7 @@ int main(){
         printf("1. Vizualizare Autoturisme\n");
 
         sageata(pos,2);
-        printf("2. Rezervari\n");
+        printf("2. Inchiriere\n");
 
         sageata(pos, 3);
         printf("3. Functii Autoturisme [ADMIN ONLY]\n");
@@ -342,6 +382,19 @@ int main(){
         loopsageata(&pos,0,7);
 
         optiuni(&pos,&stopexec,&nextpage);
+
+        if(stopexec == 1){
+            system("cls");
+            printf("Sunteti sigur ca doriti sa inchideti aplicatia ? (y/n) :");
+            char c = getch();
+            if(c == 'y'){
+                printf("\n\nAplicatia se va inchide in cateva secunde");
+                Sleep(2600);
+                stopexec = 1;
+            }
+            else
+                stopexec = 0;
+        }
 
         if(nextpage == 1){
             nextpage = 0;
@@ -410,7 +463,6 @@ int main(){
                             blocheaza_stergere = 0;
                             ok = 1;
                             Sleep(2000);
-                            
                         }
                         else
                             printf("PIN Gresit. Incearca din nou...\n");
@@ -419,10 +471,16 @@ int main(){
                 }while(ok == 0);
             }
             else if(pos == 6 && blocheaza_stergere == 0){
+                system("cls");
                 printf("Functiile nu sunt blocate");
-                Sleep(2000);
+                Sleep(2500);
             }
+            
         }
+        FILE *pp = fopen("status_functie_5.txt","w");
+        fprintf(pp,"%d",blocheaza_stergere);
+        fclose(pp);
+        
     }
 
 
