@@ -1,1 +1,1 @@
-You need both txt files for it to run
+You need all txt files for it to run
