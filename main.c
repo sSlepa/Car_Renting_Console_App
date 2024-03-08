@@ -55,7 +55,6 @@ void admin_help(){
             printf("Sintaxa adaugare : NUME | MODEL | AN | DISPONIBIL/INDISPONIBIL | PRET_PER_ZI\n");
             printf("Se pune 1 singur spatiu intre campurile de completat al masinilor\n");
             printf("Pentru modele ce sunt compuse din mai multe cuvinte, se folosesc separatori (\"-\",\"_\")\n");
-            printf("Nu aprobati contracte de inchiriere pentru salarii mai mici decat 1200 RON\n");
             printf("Orice neclaritate raportati la manager\n");
             printf("Aplicatia este in teste, pot aparea erori. Reporniti daca se blocheaza\n");
             printf("Parola si PIN-ul de admin se primesc fizic de la manager\n");
@@ -77,7 +76,7 @@ void admin_help(){
         else if(strcmp(pass,"exit") == 0)
             return;
         else{
-            printf("Parola gresita\n");
+            printf("\nParola gresita\n");
             printf("Incercari ramase %d\n\n",try - 1);
         }
         try--;
@@ -260,7 +259,7 @@ void solve_admin_page(){
             else if(strcmp(pass,"exit") == 0)
                 return;
             else{
-                printf("Parola gresita\n");
+                printf("\nParola gresita\n");
                 printf("Incercari ramase %d\n\n",try - 1);
             }
             try--;
@@ -365,7 +364,7 @@ void clear_data(){
         else if(strcmp(pass,"exit") == 0)
             return;
         else{
-            printf("Parola gresita\n");
+            printf("\nParola gresita\n");
             printf("Incercari ramase %d\n\n",try - 1);
         }
         try--;
@@ -542,3 +541,9 @@ int main(){
 
     return 0;
 }
+/*
+admin123
+0852
+1111
+
+*/
