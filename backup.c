@@ -35,8 +35,19 @@ void admin_help(){
     int intrat = 0;
     while(try > 0 && intrat == 0){
         printf("Introdu parola de administrator (exit pentru a iesi): ");
-        scanf("%s",pass);
-        getchar();
+        int i = 0;
+        while(i <= 100){
+            pass[i] = getch();
+            if(pass[i] == 13) 
+                break;
+            else if(pass[i] == '\b') 
+                printf("\b \b");
+            else
+                printf("*");
+            i++;
+        }
+        pass[i] = '\0';
+
         if(strcmp(pass,"admin123") == 0){
             intrat = 1;
             system("cls");
@@ -228,8 +239,19 @@ void solve_admin_page(){
         int intrat = 0;
         while(try > 0 && intrat == 0){
             printf("Introdu parola de administrator (exit pentru a iesi): ");
-            scanf("%s",pass);
-            getchar();
+            int i = 0;
+            while(i <= 100){
+                pass[i] = getch();
+                if(pass[i] == 13) 
+                    break;
+                else if(pass[i] == '\b') 
+                    printf("\b \b");
+                else
+                    printf("*");
+                i++;
+            }
+            pass[i] = '\0';
+
             if(strcmp(pass,"admin123") == 0){
                 intrat = 1;
                 system("cls");
@@ -285,8 +307,18 @@ void clear_data(){
     int intrat = 0;
     while(try > 0 && intrat == 0){
         printf("Introdu parola de administrator (exit pentru a iesi): ");
-        scanf("%s",pass);
-        getchar();
+        int i = 0;
+        while(i <= 100){
+            pass[i] = getch();
+            if(pass[i] == 13) 
+                break;
+            else if(pass[i] == '\b') 
+                printf("\b \b");
+            else
+                printf("*");
+            i++;
+        }
+        pass[i] = '\0';
         if(strcmp(pass,"admin123") == 0){
             char ch;
             system("cls");
@@ -296,7 +328,19 @@ void clear_data(){
             if(ch == 'y'){
                 char pin[25];
                 printf("\nPentru siguranta introduceti codul PIN de admin (1 incercare, daca se gresete aplicatia blocheaza functia): ");
-                scanf("%s",pin);
+                int i = 0;
+                while(i <= 100){
+                    pin[i] = getch();
+                    if(pin[i] == 13) 
+                        break;
+                    else if(pin[i] == '\b') 
+                        printf("\b \b");
+                    else
+                        printf("*");
+                    i++;
+                }
+                printf("\n");
+                pin[i] = '\0';
                 if(strcmp(pin,"0852") == 0){
                     FILE *fp = fopen("masini.txt","w");
                     fprintf(fp,"%s","");
@@ -445,11 +489,23 @@ int main(){
                 system("cls");
                 printf("=== MENIU ADMIN ===\n");
                 printf("Functie destinata supervizorului/managerului pentru a putea debloca anumite functii\n");
-                printf("Introduceti codul PIN (4 cifre / 0000 pentru revenire) :");
+                printf("Introduceti codul PIN (4 cifre / 0000 pentru revenire) : ");
                 char PIN[5];
                 int ok = 0;
                 do{
-                    scanf("%s",PIN);
+                    int i = 0;
+                    while(i <= 100){
+                        PIN[i] = getch();
+                        if(PIN[i] == 13) 
+                            break;
+                        else if(PIN[i] == '\b') 
+                            printf("\b \b");
+                        else
+                            printf("*");
+                        i++;
+                    }
+                    printf("\n");
+                    PIN[i] = '\0';
                     if(strcmp(PIN,"0000") == 0){
                         printf("Intoarcere la ecran principal...");
                         Sleep(5600);
