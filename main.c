@@ -35,15 +35,21 @@ void admin_help(){
     int intrat = 0;
     while(try > 0 && intrat == 0){
         printf("Introdu parola de administrator (exit pentru a iesi): ");
+
         int i = 0;
-        while(i <= 100){
+        while(1){
             pass[i] = getch();
+
             if(pass[i] == 13) 
                 break;
-            else if(pass[i] == '\b') 
+
+            else if(i >= 1 && pass[i] == '\b'){
                 printf("\b \b");
+                i -= 2;
+            }
             else
                 printf("*");
+
             i++;
         }
         pass[i] = '\0';
@@ -238,15 +244,21 @@ void solve_admin_page(){
         int intrat = 0;
         while(try > 0 && intrat == 0){
             printf("Introdu parola de administrator (exit pentru a iesi): ");
+
             int i = 0;
-            while(i <= 100){
+            while(1){
                 pass[i] = getch();
+
                 if(pass[i] == 13) 
                     break;
-                else if(pass[i] == '\b') 
+
+                else if(i >= 1 && pass[i] == '\b'){
                     printf("\b \b");
+                    i -= 2;
+                }
                 else
                     printf("*");
+
                 i++;
             }
             pass[i] = '\0';
@@ -306,18 +318,25 @@ void clear_data(){
     int intrat = 0;
     while(try > 0 && intrat == 0){
         printf("Introdu parola de administrator (exit pentru a iesi): ");
+
         int i = 0;
-        while(i <= 100){
+        while(1){
             pass[i] = getch();
+
             if(pass[i] == 13) 
                 break;
-            else if(pass[i] == '\b') 
+
+            else if(i >= 1 && pass[i] == '\b'){
                 printf("\b \b");
+                i -= 2;
+            }
             else
                 printf("*");
+
             i++;
         }
         pass[i] = '\0';
+
         if(strcmp(pass,"admin123") == 0){
             char ch;
             system("cls");
@@ -327,19 +346,25 @@ void clear_data(){
             if(ch == 'y'){
                 char pin[25];
                 printf("\nPentru siguranta introduceti codul PIN de admin (1 incercare, daca se gresete aplicatia blocheaza functia): ");
+
                 int i = 0;
-                while(i <= 100){
+                while(1){
                     pin[i] = getch();
                     if(pin[i] == 13) 
                         break;
-                    else if(pin[i] == '\b') 
+                    else if(i >= 1 && pin[i] == '\b'){
                         printf("\b \b");
+                        i -= 2;
+                    }
                     else
                         printf("*");
+
                     i++;
                 }
+
                 printf("\n");
                 pin[i] = '\0';
+
                 if(strcmp(pin,"0852") == 0){
                     FILE *fp = fopen("masini.txt","w");
                     fprintf(fp,"%s","");
@@ -493,14 +518,19 @@ int main(){
                 int ok = 0;
                 do{
                     int i = 0;
-                    while(i <= 100){
+                    while(1){
                         PIN[i] = getch();
+
                         if(PIN[i] == 13) 
                             break;
-                        else if(PIN[i] == '\b') 
+
+                        else if(i >= 1 && PIN[i] == '\b'){
                             printf("\b \b");
+                            i -= 2;
+                        }
                         else
                             printf("*");
+
                         i++;
                     }
                     printf("\n");
