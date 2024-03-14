@@ -35,15 +35,21 @@ void admin_help(){
     int intrat = 0;
     while(try > 0 && intrat == 0){
         printf("Introdu parola de administrator (exit pentru a iesi): ");
+
         int i = 0;
-        while(i <= 100){
+        while(1){
             pass[i] = getch();
+
             if(pass[i] == 13) 
                 break;
-            else if(pass[i] == '\b') 
+
+            else if(i >= 1 && pass[i] == '\b'){
                 printf("\b \b");
+                i -= 2;
+            }
             else
                 printf("*");
+
             i++;
         }
         pass[i] = '\0';
@@ -55,7 +61,6 @@ void admin_help(){
             printf("Sintaxa adaugare : NUME | MODEL | AN | DISPONIBIL/INDISPONIBIL | PRET_PER_ZI\n");
             printf("Se pune 1 singur spatiu intre campurile de completat al masinilor\n");
             printf("Pentru modele ce sunt compuse din mai multe cuvinte, se folosesc separatori (\"-\",\"_\")\n");
-            printf("Nu aprobati contracte de inchiriere pentru salarii mai mici decat 1200 RON\n");
             printf("Orice neclaritate raportati la manager\n");
             printf("Aplicatia este in teste, pot aparea erori. Reporniti daca se blocheaza\n");
             printf("Parola si PIN-ul de admin se primesc fizic de la manager\n");
@@ -77,7 +82,7 @@ void admin_help(){
         else if(strcmp(pass,"exit") == 0)
             return;
         else{
-            printf("Parola gresita\n");
+            printf("\nParola gresita\n");
             printf("Incercari ramase %d\n\n",try - 1);
         }
         try--;
@@ -239,15 +244,21 @@ void solve_admin_page(){
         int intrat = 0;
         while(try > 0 && intrat == 0){
             printf("Introdu parola de administrator (exit pentru a iesi): ");
+
             int i = 0;
-            while(i <= 100){
+            while(1){
                 pass[i] = getch();
+
                 if(pass[i] == 13) 
                     break;
-                else if(pass[i] == '\b') 
+
+                else if(i >= 1 && pass[i] == '\b'){
                     printf("\b \b");
+                    i -= 2;
+                }
                 else
                     printf("*");
+
                 i++;
             }
             pass[i] = '\0';
@@ -260,7 +271,7 @@ void solve_admin_page(){
             else if(strcmp(pass,"exit") == 0)
                 return;
             else{
-                printf("Parola gresita\n");
+                printf("\nParola gresita\n");
                 printf("Incercari ramase %d\n\n",try - 1);
             }
             try--;
@@ -307,18 +318,25 @@ void clear_data(){
     int intrat = 0;
     while(try > 0 && intrat == 0){
         printf("Introdu parola de administrator (exit pentru a iesi): ");
+
         int i = 0;
-        while(i <= 100){
+        while(1){
             pass[i] = getch();
+
             if(pass[i] == 13) 
                 break;
-            else if(pass[i] == '\b') 
+
+            else if(i >= 1 && pass[i] == '\b'){
                 printf("\b \b");
+                i -= 2;
+            }
             else
                 printf("*");
+
             i++;
         }
         pass[i] = '\0';
+
         if(strcmp(pass,"admin123") == 0){
             char ch;
             system("cls");
@@ -328,19 +346,25 @@ void clear_data(){
             if(ch == 'y'){
                 char pin[25];
                 printf("\nPentru siguranta introduceti codul PIN de admin (1 incercare, daca se gresete aplicatia blocheaza functia): ");
+
                 int i = 0;
-                while(i <= 100){
+                while(1){
                     pin[i] = getch();
                     if(pin[i] == 13) 
                         break;
-                    else if(pin[i] == '\b') 
+                    else if(i >= 1 && pin[i] == '\b'){
                         printf("\b \b");
+                        i -= 2;
+                    }
                     else
                         printf("*");
+
                     i++;
                 }
+
                 printf("\n");
                 pin[i] = '\0';
+
                 if(strcmp(pin,"0852") == 0){
                     FILE *fp = fopen("masini.txt","w");
                     fprintf(fp,"%s","");
@@ -365,7 +389,7 @@ void clear_data(){
         else if(strcmp(pass,"exit") == 0)
             return;
         else{
-            printf("Parola gresita\n");
+            printf("\nParola gresita\n");
             printf("Incercari ramase %d\n\n",try - 1);
         }
         try--;
@@ -494,14 +518,19 @@ int main(){
                 int ok = 0;
                 do{
                     int i = 0;
-                    while(i <= 100){
+                    while(1){
                         PIN[i] = getch();
+
                         if(PIN[i] == 13) 
                             break;
-                        else if(PIN[i] == '\b') 
+
+                        else if(i >= 1 && PIN[i] == '\b'){
                             printf("\b \b");
+                            i -= 2;
+                        }
                         else
                             printf("*");
+
                         i++;
                     }
                     printf("\n");
@@ -542,3 +571,9 @@ int main(){
 
     return 0;
 }
+/*
+admin123
+0852
+1111
+
+*/
