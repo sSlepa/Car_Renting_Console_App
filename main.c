@@ -226,7 +226,8 @@ void veh_update_status(){
             Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
 
         }
-        printf("\nApasa ESC pentru a iesi");
+        printf("\nPagina %d",pagina);
+        printf("\n--------------------------\nApasa ESC pentru a iesi...");
         loopsageata(&pointer_update,0,min(6,nrMasini - 5 * (pagina - 1) + 1));
         
         char tasta = getch();
@@ -319,7 +320,8 @@ void veh_update_price(){
             Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
 
         }
-        printf("\nApasa ESC pentru a iesi");
+        printf("\nPagina %d",pagina);
+        printf("\n--------------------------\nApasa ESC pentru a iesi...");
         loopsageata(&pointer_update,0,min(6,nrMasini - 5 * (pagina - 1) + 1));
         
         char tasta = getch();
@@ -453,7 +455,8 @@ void sterge_veh(){
             Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
 
         }
-        printf("\nApasa ESC pentru a iesi");
+        printf("\nPagina %d",pagina);
+        printf("\n--------------------------\nApasa ESC pentru a iesi...");
         loopsageata(&pointer,0,min(6,nrMasini - 5 * (pagina - 1) + 1));
         
         char tasta = getch();
