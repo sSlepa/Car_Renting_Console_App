@@ -122,12 +122,31 @@ void load_from_file_car_stock(){
     fclose(fp);
 }
 
+void auto_load(){
+
+    FILE *fp = fopen("masini.txt","w");
+    fprintf(fp,"%s","");
+    fclose(fp);
+
+    FILE *fp2 = fopen("masini.txt","a");
+
+    for(int i = 1 ; i <= nrMasini ; ++i){
+        fprintf(fp2,"%s %s %s %s %s",Masini[i].nume,Masini[i].model,Masini[i].an,
+        Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
+    }
+
+    fclose(fp2);
+                
+    load_from_file_car_stock();
+
+}
+
 void sageata(int pozitie_curenta, int pozitie_cautata){
 
     if(pozitie_curenta == pozitie_cautata)
-        printf("=> ");
+        printf(" =>   ");
     else 
-        printf("   ");
+        printf("");
 
 }
 void loopsageata(int *pos,int min,int max){
@@ -171,23 +190,273 @@ void adauga_veh(){
 
         FILE *fp = fopen("masini.txt","a");
 
-        fprintf(fp,"%s\n",newcar);
+        fprintf(fp,"%s",newcar);
+        fprintf(fp,"%s","\n");
         fclose(fp);    
+
+        Sleep(400);
+
+        system("cls");
+        printf("Vehiculul \"%s\" a fost adaugat cu succes !",newcar);
+
+        Sleep(2500);
         
+    }
+}
+
+void veh_update_status(){
+
+    int stop_update = 0,pointer_update = 0,next_page_update = 0;
+    while(stop_update == 0){
+
+        system("cls");
+
+        printf("=== MENIU UPDATE ===\n");
+
+        for(int i = 1 ; i <= nrMasini ; ++i){
+
+            sageata(pointer_update, i);
+
+            printf("%d. %s %s %s %s %s\n",i,Masini[i].nume,Masini[i].model,Masini[i].an,
+            Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
+
+        }
+
+        printf("\nApasa ESC pentru a iesi");
+        loopsageata(&pointer_update,0,nrMasini + 1);
+        optiuni(&pointer_update,&stop_update,&next_page_update);
+
+        if(next_page_update == 1 && pointer_update >= 1 && pointer_update <= nrMasini){
+
+            next_page_update = 0;
+
+            system("cls");
+
+            int ok = 0;
+            if(strcmp(Masini[pointer_update].disponibilitare,"Disponibil") == 0){
+                strcpy(Masini[pointer_update].disponibilitare,"Indisponibil");
+                ok = 1;
+            }
+            else
+                strcpy(Masini[pointer_update].disponibilitare,"Disponibil");
+                    
+            if(ok == 1)
+                printf("Status schimbat din \"Disponibil\" in \"Indisponibil\" pentru vehiculul \"%s %s %s\" ",
+                Masini[pointer_update].nume,Masini[pointer_update].model,Masini[pointer_update].an);
+            else if(ok == 0)
+                printf("Status schimbat din \"Indisponibil\" in \"Disponibil\" pentru vehiculul \"%s %s %s\" ",
+                Masini[pointer_update].nume,Masini[pointer_update].model,Masini[pointer_update].an);
+
+            auto_load();
+
+            Sleep(2500);
+                    
+        }
+    }
+}
+
+int verifpret(char pret[]){
+
+    for(int i = 0 ; pret[i] ; ++i)
+        if(pret[i] < '0' || pret[i] > '9')
+            return 0;
+    
+    return 1;
+
+}
+int getprice(char pret[]){
+
+    int x = 0;
+    for(int i = 0 ; i < strlen(pret) - 1 ; ++i)
+        x = x * 10 + (pret[i] - '0');
+    
+    return x;
+
+}
+
+void veh_update_price(){
+
+    int stop_update = 0,pointer_update = 0,next_page_update = 0;
+    while(stop_update == 0){
+
+        system("cls");
+
+        printf("=== MENIU UPDATE ===\n");
+
+        for(int i = 1 ; i <= nrMasini ; ++i){
+
+            sageata(pointer_update, i);
+
+            printf("%d. %s %s %s %s %s\n",i,Masini[i].nume,Masini[i].model,Masini[i].an,
+            Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
+
+        }
+
+        printf("\nApasa ESC pentru a iesi");
+        loopsageata(&pointer_update,0,nrMasini + 1);
+        optiuni(&pointer_update,&stop_update,&next_page_update);
+
+        if(next_page_update == 1 && pointer_update >= 1 && pointer_update <= nrMasini){
+
+            int iesi = 0;
+            next_page_update = 0;
+
+            system("cls");
+
+            int value = getprice(Masini[pointer_update].pret_per_zi_ron);
+
+            printf("Introdu noul pret/zi al vehiculului \"%s %s %s\". Pret curent : %d (exit pentru a iesi) : ",Masini[pointer_update].nume,
+            Masini[pointer_update].model,Masini[pointer_update].an,value);
+
+            char pret[26];
+            int ok = 0;
+            while(ok == 0){
+                scanf("%s", pret);
+                getchar();
+                printf("\n");
+
+                if(strcmp("exit",pret) == 0){
+                    iesi = 1;
+                    break;
+                }
+                
+                ok = verifpret(pret);
+                if(ok == 0)
+                    printf("Pret in format incorect, reincearca : ");
+            }
+
+            if(iesi == 0){
+            
+                strcpy(Masini[pointer_update].pret_per_zi_ron,pret);
+
+                int undepun_n = strlen(pret);
+
+                if(strlen(Masini[pointer_update].pret_per_zi_ron) < undepun_n)
+                    undepun_n = strlen(Masini[pointer_update].pret_per_zi_ron);
+
+                Masini[pointer_update].pret_per_zi_ron[undepun_n] = '\n';
+
+                Masini[pointer_update].pret_per_zi_ron[undepun_n + 1] = '\0';
+                
+                auto_load();
+
+                printf("Pret actualizat cu succes");
+
+                Sleep(2500);
+            }
+                    
+        }
     }
 }
 
 void actualizeaza_veh(){
 
-    printf("%s","Se lucreaza");
-    Sleep(2000);
+    int stopexec_veh = 0,pointer = 0,next_page;
+    
+    while(stopexec_veh == 0){
+        
+        system("cls");
 
+        printf("=== MENIU UPDATE ===\n");
+
+        sageata(pointer,1);
+        printf("1. Disponibilitate\n");
+    
+        sageata(pointer,2);
+        printf("2. Pret\n\n");
+        
+        printf("Apasa ESC pentru a iesi");
+        loopsageata(&pointer,0,3);
+
+        optiuni(&pointer,&stopexec_veh,&next_page);
+
+        if(next_page == 1 && pointer == 1){
+
+            next_page = 0;
+            system("cls");
+            veh_update_status();
+            
+        }
+        else if(next_page == 1 && pointer == 2){
+            next_page = 0;
+            system("cls");
+            veh_update_price();
+        }
+    }
 }
 void sterge_veh(){
 
-    printf("%s","Se lucreaza");
-    Sleep(2000);
+    int stopexec_veh = 0,pointer = 1,next_page;
 
+    while(stopexec_veh == 0){
+
+        system("cls");
+
+        printf("=== MENIU DELETE ===\n");
+
+        for(int i = 1 ; i <= nrMasini ; ++i){
+
+            sageata(pointer, i);
+
+            printf("%d. %s %s %s %s %s\n",i,Masini[i].nume,Masini[i].model,Masini[i].an,
+            Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
+
+        }
+        printf("\nApasa ESC pentru a iesi");
+        loopsageata(&pointer,0,nrMasini + 1);
+        optiuni(&pointer,&stopexec_veh,&next_page);
+    
+        if(next_page == 1 && pointer >= 1 && pointer <= nrMasini){
+
+            system("cls");
+
+            next_page = 0;
+            char saveforoutput[5][256];
+
+            strcpy(saveforoutput[0],Masini[pointer].nume);
+            strcpy(saveforoutput[1],Masini[pointer].model);
+            strcpy(saveforoutput[2],Masini[pointer].an);
+            strcpy(saveforoutput[3],Masini[pointer].disponibilitare);
+            strcpy(saveforoutput[4],Masini[pointer].pret_per_zi_ron);
+
+            saveforoutput[4][strlen(saveforoutput[4]) - 1] = 0;
+
+            printf("Sunteti sigur ca doriti sa stergeti vehiculul \"%s %s %s %s %s\" (y/n) : ",saveforoutput[0],saveforoutput[1],
+            saveforoutput[2],saveforoutput[3],saveforoutput[4]);
+
+            char ch = getch();
+
+            printf("%c\n\n", ch);
+            
+
+            if(ch == 'y'){
+
+                for(int i = pointer ; i < nrMasini ; ++i){
+                    strcpy(Masini[i].nume,Masini[i + 1].nume);
+                    strcpy(Masini[i].model,Masini[i + 1].model);
+                    strcpy(Masini[i].an,Masini[i + 1].an);
+                    strcpy(Masini[i].disponibilitare,Masini[i + 1].disponibilitare);
+                    strcpy(Masini[i].pret_per_zi_ron,Masini[i + 1].pret_per_zi_ron);
+
+                }
+                
+                nrMasini--;
+
+                auto_load();
+                
+                stopexec_veh = 1;
+
+                printf("Vehiculul \"%s %s %s %s %s\" a fost sters cu succes ! ",saveforoutput[0],saveforoutput[1],saveforoutput[2]
+                ,saveforoutput[3],saveforoutput[4]);
+
+                Sleep(2500);
+            }
+            else{
+                printf("Se reintoarce la ecran anterior...");
+                Sleep(2000);
+            }
+        }   
+    }
 }
 
 void adaugare_actualizare_stergere(){
@@ -230,7 +499,13 @@ void adaugare_actualizare_stergere(){
             else if(newpointer == 3){
                 newpointer = 0;
                 system("cls");
-                sterge_veh();
+                if(nrMasini == 0){
+                    printf("Inventar gol...");
+                    Sleep(2500);
+                }
+                else
+                    sterge_veh();
+                
             }
         }
     }
@@ -571,7 +846,9 @@ int main(){
 
     return 0;
 }
+
 /*
+
 admin123
 0852
 1111
