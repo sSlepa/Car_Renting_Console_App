@@ -206,46 +206,68 @@ void adauga_veh(){
 
 void veh_update_status(){
 
-    int stop_update = 0,pointer_update = 0,next_page_update = 0;
+    int stop_update = 0,pointer_update = 1,next_page_update = 0;
+    int pagina = 1;
     while(stop_update == 0){
 
         system("cls");
 
         printf("=== MENIU UPDATE ===\n");
 
-        for(int i = 1 ; i <= nrMasini ; ++i){
+        for(int i = 5 * (pagina - 1) + 1 ; i <= min(5 * pagina,nrMasini) ; ++i){
 
-            sageata(pointer_update, i);
+            int auxi = i % 5;
+            if(auxi == 0)
+                auxi = 5;
+
+            sageata(pointer_update,auxi);
 
             printf("%d. %s %s %s %s %s\n",i,Masini[i].nume,Masini[i].model,Masini[i].an,
             Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
 
         }
-
         printf("\nApasa ESC pentru a iesi");
-        loopsageata(&pointer_update,0,nrMasini + 1);
-        optiuni(&pointer_update,&stop_update,&next_page_update);
+        loopsageata(&pointer_update,0,min(6,nrMasini - 5 * (pagina - 1) + 1));
+        
+        char tasta = getch();
 
-        if(next_page_update == 1 && pointer_update >= 1 && pointer_update <= nrMasini){
+        if(tasta == 13)
+            next_page_update = 1;
+        else if(pagina > 1 && tasta == 75)
+            pagina--,pointer_update = 1;
+        else if((5 * (pagina + 1) <= nrMasini || nrMasini - (5 * pagina) > 0) && tasta == 77)
+            pagina++,pointer_update = 1;
+        else if(tasta == 80)
+            pointer_update++;
+        else if(tasta == 72)
+            pointer_update--;
+        else if(tasta == 27)
+            stop_update = 1;
+
+        system("cls");
+
+        if(next_page_update == 1 && pointer_update >= 1 && pointer_update <= 5){
 
             next_page_update = 0;
+
+            int pointer_adevarat = 5 * (pagina - 1) + pointer_update;
 
             system("cls");
 
             int ok = 0;
-            if(strcmp(Masini[pointer_update].disponibilitare,"Disponibil") == 0){
-                strcpy(Masini[pointer_update].disponibilitare,"Indisponibil");
+            if(strcmp(Masini[pointer_adevarat].disponibilitare,"Disponibil") == 0){
+                strcpy(Masini[pointer_adevarat].disponibilitare,"Indisponibil");
                 ok = 1;
             }
             else
-                strcpy(Masini[pointer_update].disponibilitare,"Disponibil");
+                strcpy(Masini[pointer_adevarat].disponibilitare,"Disponibil");
                     
             if(ok == 1)
                 printf("Status schimbat din \"Disponibil\" in \"Indisponibil\" pentru vehiculul \"%s %s %s\" ",
-                Masini[pointer_update].nume,Masini[pointer_update].model,Masini[pointer_update].an);
+                Masini[pointer_adevarat].nume,Masini[pointer_adevarat].model,Masini[pointer_adevarat].an);
             else if(ok == 0)
                 printf("Status schimbat din \"Indisponibil\" in \"Disponibil\" pentru vehiculul \"%s %s %s\" ",
-                Masini[pointer_update].nume,Masini[pointer_update].model,Masini[pointer_update].an);
+                Masini[pointer_adevarat].nume,Masini[pointer_adevarat].model,Masini[pointer_adevarat].an);
 
             auto_load();
 
@@ -276,37 +298,59 @@ int getprice(char pret[]){
 
 void veh_update_price(){
 
-    int stop_update = 0,pointer_update = 0,next_page_update = 0;
+    int stop_update = 0,pointer_update = 1,next_page_update = 0;
+    int pagina = 1;
+
     while(stop_update == 0){
 
         system("cls");
 
         printf("=== MENIU UPDATE ===\n");
 
-        for(int i = 1 ; i <= nrMasini ; ++i){
+        for(int i = 5 * (pagina - 1) + 1 ; i <= min(5 * pagina,nrMasini) ; ++i){
 
-            sageata(pointer_update, i);
+            int auxi = i % 5;
+            if(auxi == 0)
+                auxi = 5;
+
+            sageata(pointer_update,auxi);
 
             printf("%d. %s %s %s %s %s\n",i,Masini[i].nume,Masini[i].model,Masini[i].an,
             Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
 
         }
-
         printf("\nApasa ESC pentru a iesi");
-        loopsageata(&pointer_update,0,nrMasini + 1);
-        optiuni(&pointer_update,&stop_update,&next_page_update);
+        loopsageata(&pointer_update,0,min(6,nrMasini - 5 * (pagina - 1) + 1));
+        
+        char tasta = getch();
+
+        if(tasta == 13)
+            next_page_update = 1;
+        else if(pagina > 1 && tasta == 75)
+            pagina--,pointer_update = 1;
+        else if((5 * (pagina + 1) <= nrMasini || nrMasini - (5 * pagina) > 0) && tasta == 77)
+            pagina++,pointer_update = 1;
+        else if(tasta == 80)
+            pointer_update++;
+        else if(tasta == 72)
+            pointer_update--;
+        else if(tasta == 27)
+            stop_update = 1;
+
+        system("cls");
 
         if(next_page_update == 1 && pointer_update >= 1 && pointer_update <= nrMasini){
 
             int iesi = 0;
             next_page_update = 0;
+            int pointer_adevarat = 5 * (pagina - 1) + pointer_update;
 
             system("cls");
 
-            int value = getprice(Masini[pointer_update].pret_per_zi_ron);
+            int value = getprice(Masini[pointer_adevarat].pret_per_zi_ron);
 
-            printf("Introdu noul pret/zi al vehiculului \"%s %s %s\". Pret curent : %d (exit pentru a iesi) : ",Masini[pointer_update].nume,
-            Masini[pointer_update].model,Masini[pointer_update].an,value);
+            printf("Introdu noul pret/zi al vehiculului \"%s %s %s\". Pret curent : %d (exit pentru a iesi) : "
+            ,Masini[pointer_adevarat].nume,Masini[pointer_adevarat].model,Masini[pointer_adevarat].an,value);
 
             char pret[26];
             int ok = 0;
@@ -327,16 +371,16 @@ void veh_update_price(){
 
             if(iesi == 0){
             
-                strcpy(Masini[pointer_update].pret_per_zi_ron,pret);
+                strcpy(Masini[pointer_adevarat].pret_per_zi_ron,pret);
 
                 int undepun_n = strlen(pret);
 
-                if(strlen(Masini[pointer_update].pret_per_zi_ron) < undepun_n)
-                    undepun_n = strlen(Masini[pointer_update].pret_per_zi_ron);
+                if(strlen(Masini[pointer_adevarat].pret_per_zi_ron) < undepun_n)
+                    undepun_n = strlen(Masini[pointer_adevarat].pret_per_zi_ron);
 
-                Masini[pointer_update].pret_per_zi_ron[undepun_n] = '\n';
+                Masini[pointer_adevarat].pret_per_zi_ron[undepun_n] = '\n';
 
-                Masini[pointer_update].pret_per_zi_ron[undepun_n + 1] = '\0';
+                Masini[pointer_adevarat].pret_per_zi_ron[undepun_n + 1] = '\0';
                 
                 auto_load();
 
@@ -351,7 +395,7 @@ void veh_update_price(){
 
 void actualizeaza_veh(){
 
-    int stopexec_veh = 0,pointer = 0,next_page;
+    int stopexec_veh = 0,pointer = 1,next_page;
     
     while(stopexec_veh == 0){
         
@@ -388,36 +432,61 @@ void sterge_veh(){
 
     int stopexec_veh = 0,pointer = 1,next_page;
 
+    int pagina = 1;
+
     while(stopexec_veh == 0){
 
         system("cls");
 
         printf("=== MENIU DELETE ===\n");
 
-        for(int i = 1 ; i <= nrMasini ; ++i){
+        for(int i = 5 * (pagina - 1) + 1 ; i <= min(5 * pagina,nrMasini) ; ++i){
 
-            sageata(pointer, i);
+
+            int auxi = i % 5;
+            if(auxi == 0)
+                auxi = 5;
+
+            sageata(pointer,auxi);
 
             printf("%d. %s %s %s %s %s\n",i,Masini[i].nume,Masini[i].model,Masini[i].an,
             Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
 
         }
         printf("\nApasa ESC pentru a iesi");
-        loopsageata(&pointer,0,nrMasini + 1);
-        optiuni(&pointer,&stopexec_veh,&next_page);
+        loopsageata(&pointer,0,min(6,nrMasini - 5 * (pagina - 1) + 1));
+        
+        char tasta = getch();
+
+        if(tasta == 13)
+            next_page = 1;
+        else if(pagina > 1 && tasta == 75)
+            pagina--,pointer = 1;
+        else if((5 * (pagina + 1) <= nrMasini || nrMasini - (5 * pagina) > 0) && tasta == 77)
+            pagina++,pointer = 1;
+        else if(tasta == 80)
+            pointer++;
+        else if(tasta == 72)
+            pointer--;
+        else if(tasta == 27)
+            stopexec_veh = 1;
+
+        system("cls");
     
-        if(next_page == 1 && pointer >= 1 && pointer <= nrMasini){
+        if(next_page == 1 && pointer >= 1 && pointer <= 5){
 
             system("cls");
+
+            int pointer_adevarat = 5 * (pagina - 1) + pointer;
 
             next_page = 0;
             char saveforoutput[5][256];
 
-            strcpy(saveforoutput[0],Masini[pointer].nume);
-            strcpy(saveforoutput[1],Masini[pointer].model);
-            strcpy(saveforoutput[2],Masini[pointer].an);
-            strcpy(saveforoutput[3],Masini[pointer].disponibilitare);
-            strcpy(saveforoutput[4],Masini[pointer].pret_per_zi_ron);
+            strcpy(saveforoutput[0],Masini[pointer_adevarat].nume);
+            strcpy(saveforoutput[1],Masini[pointer_adevarat].model);
+            strcpy(saveforoutput[2],Masini[pointer_adevarat].an);
+            strcpy(saveforoutput[3],Masini[pointer_adevarat].disponibilitare);
+            strcpy(saveforoutput[4],Masini[pointer_adevarat].pret_per_zi_ron);
 
             saveforoutput[4][strlen(saveforoutput[4]) - 1] = 0;
 
@@ -431,7 +500,7 @@ void sterge_veh(){
 
             if(ch == 'y'){
 
-                for(int i = pointer ; i < nrMasini ; ++i){
+                for(int i = pointer_adevarat ; i < nrMasini ; ++i){
                     strcpy(Masini[i].nume,Masini[i + 1].nume);
                     strcpy(Masini[i].model,Masini[i + 1].model);
                     strcpy(Masini[i].an,Masini[i + 1].an);
@@ -467,6 +536,7 @@ void adaugare_actualizare_stergere(){
     while(stopexec == 0){
 
         system("cls");
+
         printf("=== MENIU ADMIN ===\n");
         sageata(newpointer, 1);
         printf("1. Adauga autovehicul\n");
@@ -562,21 +632,29 @@ void solve_admin_page(){
     }
 
 }
-void listare_stoc_masini(int nrMasini,stock Masini[]){
+void listare_stoc_masini(int pagina,int nrMasini,stock Masini[]){
 
-    for(int i = 1 ; i <= nrMasini ; ++i){
-        printf("%d. %s %s %s %s %s\n",i,Masini[i].nume,Masini[i].model,Masini[i].an,
-        Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
+    while(1){
+
+        system("cls");
+
+        for(int i = 5 * (pagina - 1) + 1 ; i <= min(5 * pagina,nrMasini) ; ++i){
+            printf("%d. %s %s %s %s %s\n",i,Masini[i].nume,Masini[i].model,Masini[i].an,
+            Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
+        }
+
+        printf("\nPagina %d",pagina);
+        printf("\n--------------------------\nApasa ESC pentru a iesi...");
+        char tasta = getch();
+
+        if(pagina > 1 && tasta == 75)
+            pagina--;
+        else if(pagina <= (nrMasini / 5) && tasta == 77)
+            pagina++;
+        else if(tasta == 27)
+            return;
 
     }
-    printf("\n--------------------------\nApasa ESC pentru a iesi...");
-    char tasta = getch();
-
-    while(tasta != 27)
-        tasta = getch();
-            
-    if(tasta == 27)
-        return;
 
 }
 void inchiriaza_vehicul(){
@@ -744,7 +822,7 @@ int main(){
             if(pos == 1){
                 pos = 0;
                 system("cls");
-                listare_stoc_masini(nrMasini,Masini);
+                listare_stoc_masini(1,nrMasini,Masini);
                 
             }
             else if(pos == 2){
