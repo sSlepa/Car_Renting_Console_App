@@ -660,10 +660,326 @@ void listare_stoc_masini(int pagina,int nrMasini,stock Masini[]){
     }
 
 }
+
+void crypt(char pass[]){
+
+    int skip = strlen(pass) / 2;
+    for(int i = 1 ; i <= skip ; ++i){
+        char ch = pass[0];
+        for(int j = 0 ; j < strlen(pass) - 1 ; ++j)
+            pass[j] = pass[j + 1];
+        
+        pass[strlen(pass) - 1] = ch;
+    }
+}
+void uncrypt(char pass[]){
+
+    int skip = strlen(pass) / 2;
+    for(int i = 1 ; i <= skip ; ++i){
+        char ch = pass[strlen(pass) - 1];
+        for(int j = strlen(pass) - 1 ; j >= 1 ; --j)
+            pass[j] = pass[j - 1];
+        
+        pass[0] = ch;
+    }
+}
+
+void add_user(){
+
+    FILE *fp = fopen("users.txt","r");
+
+    char linie[256];
+    char mat[256][256];
+    int nrUsers = 0;
+
+    while(fgets(linie,256,fp) != NULL){
+
+        //printf("%s",linie);
+        strcpy(mat[++nrUsers],linie);
+    
+    }
+    char user[256];
+    printf("Introdu numele de utilizator (exit pentru a iesi): ");
+    scanf("%[^\n]",user);
+
+    getchar();
+
+    if(strcmp(user,"exit") == 0)
+        return;
+
+    while(1){
+        int ok = 0;
+        for(int i = 1 ; i <= nrUsers ; ++i)
+            if(strcmp(mat[i],user) == 0)
+                ok = 1;
+
+        if(ok == 0)
+            break;
+        else{
+            printf("Nume de utilizator deja folosit\n\n");
+            printf("Introdu numele de utilizator : ");
+            scanf("%[^\n]",user);
+            getchar();
+        }
+    }
+    printf("Introdu parola (minim 6 caractere) : ");
+
+    int i = 0;
+    char pass[256];
+    while(1){
+        
+        char ch = getch();
+
+        if(ch != 13)
+            pass[i] = ch;
+
+        if(ch == 13 && i >= 6) 
+            break;
+        else if(ch == 13 && i < 6)
+            continue;
+        else if(i >= 1 && ch == '\b'){
+            printf("\b \b");
+            i -= 2;
+        }
+        else
+            printf("*");
+
+        i++;
+    }
+    pass[i] = 0;
+    printf("\n");
+    crypt(pass);
+    FILE *fp2 = fopen("users.txt","a");
+    fprintf(fp2,"%s",user);
+
+    fprintf(fp2,"%s","\n");
+
+    fclose(fp2);
+
+    FILE *fp3 = fopen("passwords.txt","a");
+
+    printf("%s",pass);
+
+    fprintf(fp3,"%s",pass);
+
+    fprintf(fp3,"%s","\n");
+
+    fclose(fp3);
+
+    system("cls");
+    printf("Utilizator creat cu succes !");
+    Sleep(2500);
+
+}
+
+void rent_car(){
+
+    int stopexec = 0,pointer = 1,next_page = 0;
+
+    int pagina = 1;
+
+    while(stopexec == 0){
+
+        system("cls");
+
+        printf("=== MENIU RENT ===\n");
+
+        for(int i = 5 * (pagina - 1) + 1 ; i <= min(5 * pagina,nrMasini) ; ++i){
+
+
+            int auxi = i % 5;
+            if(auxi == 0)
+                auxi = 5;
+
+            sageata(pointer,auxi);
+
+            printf("%d. %s %s %s %s %s\n",i,Masini[i].nume,Masini[i].model,Masini[i].an,
+            Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
+
+        }
+        printf("\nPagina %d",pagina);
+        printf("\n--------------------------\nApasa ESC pentru a iesi...");
+        loopsageata(&pointer,0,min(6,nrMasini - 5 * (pagina - 1) + 1));
+        
+        char tasta = getch();
+
+        if(tasta == 13)
+            next_page = 1;
+        else if(pagina > 1 && tasta == 75)
+            pagina--,pointer = 1;
+        else if((5 * (pagina + 1) <= nrMasini || nrMasini - (5 * pagina) > 0) && tasta == 77)
+            pagina++,pointer = 1;
+        else if(tasta == 80)
+            pointer++;
+        else if(tasta == 72)
+            pointer--;
+        else if(tasta == 27)
+            stopexec = 1;
+
+        system("cls");
+        if(next_page == 1 && pointer >= 1 && pointer <= 5){
+
+            system("cls");
+
+            int pointer_adevarat = 5 * (pagina - 1) + pointer;
+
+        }
+    }
+
+}
+
+void log_in_user(){
+
+    char user[256];
+    
+    char linie[256];
+    char mat[256][256];
+    int nrUsers = 0;
+
+    FILE *fp = fopen("users.txt","r");
+
+    while(fgets(linie,256,fp) != NULL){
+
+        //printf("%s",linie);
+        strcpy(mat[++nrUsers],linie);
+        mat[nrUsers][strlen(mat[nrUsers]) - 1] = 0;
+    
+    }
+    printf("Introdu numele de utilizator (exit pentru a iesi): ");
+    scanf("%[^\n]",user);
+
+    getchar();
+
+    if(strcmp(user,"exit") == 0)
+        return;
+
+    int nr = 0;
+    while(1){
+        int ok = 0;
+        for(int i = 1 ; i <= nrUsers ; ++i){
+            if(strcmp(mat[i],user) == 0)
+                ok = 1, nr = i;
+        }
+        if(ok == 1)
+            break;
+        else{
+            printf("Utilizator incorect\n");
+            printf("Introdu numele de utilizator : ");
+            scanf("%[^\n]",user);
+            getchar();
+        }
+    }
+    printf("Introdu parola (minim 6 caractere) : ");
+
+    int i = 0;
+    char pass[256];
+    while(1){
+        
+        char ch = getch();
+
+        if(ch != 13)
+            pass[i] = ch;
+
+        if(ch == 13 && i >= 6) 
+            break;
+        else if(ch == 13 && i < 6)
+            continue;
+        else if(i >= 1 && ch == '\b'){
+            printf("\b \b");
+            i -= 2;
+        }
+        else
+            printf("*");
+
+        i++;
+    }
+    pass[i] = 0;
+
+    FILE *fppas = fopen("passwords.txt","r");
+
+    int ind = 1;
+    while(ind < nr)
+        fgets(linie,256,fppas),ind++;
+
+    fgets(linie,256,fppas);
+
+    linie[strlen(linie) - 1] = 0;
+
+    uncrypt(linie);
+
+    while(1){
+        if(strcmp(linie,pass) == 0){
+            system("cls");
+            printf("Logat cu succes !\n");
+            printf("Redirectionare automata spre pagina de rent...");
+            Sleep(3500);
+            rent_car();
+            break;
+        }
+        else{
+            printf("\nParola gresita, reincearca : ");
+            int i = 0;
+            while(1){
+                
+                char ch = getch();
+
+                if(ch != 13)
+                    pass[i] = ch;
+
+                if(ch == 13 && i >= 6) 
+                    break;
+                else if(ch == 13 && i < 6)
+                    continue;
+                else if(i >= 1 && ch == '\b'){
+                    printf("\b \b");
+                    i -= 2;
+                }
+                else
+                    printf("*");
+
+                i++;
+            }
+            pass[i] = 0;
+        }
+
+    }
+
+}
+
 void inchiriaza_vehicul(){
 
-    printf("%s","Se lucreaza");
-    Sleep(2000);
+    int pos = 1,stopexec = 0,nextpage = 0;
+
+    while(stopexec == 0){
+
+        system("cls");
+        printf("=== MENIU USER ===\n");
+
+        sageata(pos,1);
+        printf("1. Utilizator Nou\n");
+
+        sageata(pos,2);
+        printf("2. Utilizator Existent\n\n");
+
+        printf("Apasa ESC pentru a iesi");
+        
+        loopsageata(&pos,0,3);
+
+        optiuni(&pos,&stopexec,&nextpage);
+
+        if(nextpage == 1){
+            nextpage = 0;
+            if(pos == 1){
+                system("cls");
+                add_user();
+            }
+            else if(pos == 2){
+                system("cls");
+                log_in_user();
+            }
+        }
+    }
+    //Sleep(2000);
 
 }
 void clear_data(){
