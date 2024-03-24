@@ -168,6 +168,33 @@ void auto_load(){
     load_from_file_car_stock();
 
 }
+void auto_load_users_passwords(int nr,char useri[][256],char parole[][256]){
+
+    FILE *fp = fopen("users.txt","w");
+    fprintf(fp,"%s","");
+    fclose(fp);
+ 
+    FILE *fp2 = fopen("users.txt","a");
+
+    for(int i = 1 ; i <= nr ; ++i)
+        fprintf(fp2,"%s",useri[i]);
+    
+
+    fclose(fp2);
+
+    fp = fopen("passwords.txt","w");
+    fprintf(fp,"%s","");
+    fclose(fp);
+ 
+    fp2 = fopen("passwords.txt","a");
+
+    for(int i = 1 ; i <= nr ; ++i)
+        fprintf(fp2,"%s",parole[i]);
+    
+
+    fclose(fp2);
+
+}
 
 void sageata(int pozitie_curenta, int pozitie_cautata){
 
@@ -558,6 +585,120 @@ void sterge_veh(){
         }   
     }
 }
+void del_user(){
+
+    int stopexec = 0,pointer = 1,next_page;
+
+    int pagina = 1;
+
+    char useri[256][256];
+    char parole[256][256];
+    char linie[256];
+    int nr = 0,nr2 = 0;
+
+    FILE *fp = fopen("users.txt","r");
+    FILE *fp2 = fopen("passwords.txt","r");
+
+    while(fgets(linie,256,fp) != NULL){
+
+        strcpy(useri[++nr],linie);
+
+    }
+    while(fgets(linie,256,fp2) != NULL){
+
+        strcpy(parole[++nr2],linie);
+
+    }
+
+    fclose(fp);
+    fclose(fp2);
+    
+    while(stopexec == 0){
+
+        system("cls");
+
+        printf("=== MENIU DELETE ===\n");
+
+        for(int i = 5 * (pagina - 1) + 1 ; i <= min(5 * pagina,nr) ; ++i){
+
+            int auxi = i % 5;
+            if(auxi == 0)
+                auxi = 5;
+
+            sageata(pointer,auxi);
+
+            printf("%d. %s",i,useri[i]);
+
+        }
+        printf("\nPagina %d",pagina);
+        printf("\n--------------------------\nApasa ESC pentru a iesi...");
+        loopsageata(&pointer,0,min(6,nr - 5 * (pagina - 1) + 1));
+        
+        char tasta = getch();
+
+        if(tasta == 13)
+            next_page = 1;
+        else if(pagina > 1 && tasta == 75)
+            pagina--,pointer = 1;
+        else if((5 * (pagina + 1) <= nr || nr - (5 * pagina) > 0) && tasta == 77)
+            pagina++,pointer = 1;
+        else if(tasta == 80)
+            pointer++;
+        else if(tasta == 72)
+            pointer--;
+        else if(tasta == 27)
+            stopexec = 1;
+
+        system("cls");
+    
+        if(next_page == 1 && pointer >= 1 && pointer <= 5){
+
+            next_page = 0;
+
+            system("cls");
+
+            int pointer_adevarat = 5 * (pagina - 1) + pointer;
+
+            char saveforoutput[30];
+
+            strcpy(saveforoutput,useri[pointer_adevarat]);
+
+            saveforoutput[strlen(saveforoutput) - 1] = 0;
+
+            printf("Sunteti sigur ca doriti sa stergeti user-ul \"%s\" (y/n) : ", saveforoutput);
+
+            char ch = getch();
+
+            printf("%c\n\n", ch);
+
+    
+            if(ch == 'y'){
+
+                for(int i = pointer_adevarat ; i < nr ; ++i)
+                    strcpy(useri[i],useri[i + 1]);
+                
+                for(int i = pointer_adevarat ; i < nr ; ++i)
+                    strcpy(parole[i],parole[i + 1]);
+                
+                nr--;
+                auto_load_users_passwords(nr,useri,parole);
+
+                stopexec = 1;
+
+                printf("User-ul \"%s \" a fost sters cu succes ! ",saveforoutput);
+
+                Sleep(2500);
+            }
+            else{
+                printf("Se reintoarce la ecran anterior...");
+                Sleep(2000);
+            }
+
+
+        }  
+    }
+
+}
 
 void adaugare_actualizare_stergere(){
 
@@ -576,11 +717,14 @@ void adaugare_actualizare_stergere(){
         printf("2. Actualizare autovehicul\n");
 
         sageata(newpointer,3);
-        printf("3. Stergere autovehicul\n\n");
+        printf("3. Stergere autovehicul\n");
+
+        sageata(newpointer,4);
+        printf("4. Stergere User\n\n");
         
         printf("Apasa ESC pentru a iesi");
 
-        loopsageata(&newpointer,0,4);
+        loopsageata(&newpointer,0,5);
 
         optiuni(&newpointer,&stopexec,&nextpage);
 
@@ -607,6 +751,10 @@ void adaugare_actualizare_stergere(){
                 else
                     sterge_veh();
                 
+            }
+            else if(newpointer == 4){
+                system("cls");
+                del_user();
             }
         }
     }
@@ -1190,8 +1338,9 @@ void clear_data(){
 
 int main(){
 
+    //Sleep(8000);
     system("cls");
-
+    
     int stopexec = 0;
     int pos = 1,nextpage,previouspage;
 
