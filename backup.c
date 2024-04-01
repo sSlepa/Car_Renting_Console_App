@@ -9,22 +9,26 @@ typedef struct stock{
     char nume[30];
     char model[60];
     char an[30];
-    char disponibilitare[30];
+    char disponibilitate[30];
     char pret_per_zi_ron[30];
 
 }stock;
 
 typedef struct om{
 
-    char nume[30];
-    char prenume[30];
+    char user[256];
     char durata_inchieriere_zile[30];
-    char venit[30];
+    char telefon[30];
+    char masina_nume[30];
+    char model[30];
+    char an[30];
+    char pret[30];
 
 }om;
 
 stock Masini[1005];
-int nrMasini;
+om Oameni[1005];
+int nrMasini,nrOameni;
 int blocheaza_stergere;
 
 void admin_help(){
@@ -114,12 +118,36 @@ void load_from_file_car_stock(){
         p = strtok(NULL," ");
         strcpy(Masini[i].an,p);
         p = strtok(NULL," ");
-        strcpy(Masini[i].disponibilitare,p);
+        strcpy(Masini[i].disponibilitate,p);
         p = strtok(NULL," ");
         strcpy(Masini[i].pret_per_zi_ron,p);
     }
     
     fclose(fp);
+}
+void load_from_file_people(){
+
+    FILE *fp2 = fopen("rent.txt","r");
+    char linie[256];
+    char mat[256][256];
+    nrOameni = 0;
+    while(fgets(linie,256,fp2) != NULL){
+
+        //printf("%s",linie);
+        strcpy(mat[++nrOameni],linie);
+    
+    }
+    for(int i = 1 ; i <= nrOameni ; ++i){
+        char *p = strtok(mat[i]," ");
+        strcpy(Oameni[i].user,p);
+        p = strtok(NULL," ");
+        strcpy(Oameni[i].telefon,p);
+        p = strtok(NULL," ");
+        strcpy(Oameni[i].durata_inchieriere_zile,p);
+        p = strtok(NULL," ");
+        
+    }
+    fclose(fp2);
 }
 
 void auto_load(){
@@ -132,12 +160,39 @@ void auto_load(){
 
     for(int i = 1 ; i <= nrMasini ; ++i){
         fprintf(fp2,"%s %s %s %s %s",Masini[i].nume,Masini[i].model,Masini[i].an,
-        Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
+        Masini[i].disponibilitate,Masini[i].pret_per_zi_ron);
     }
 
     fclose(fp2);
                 
     load_from_file_car_stock();
+
+}
+void auto_load_users_passwords(int nr,char useri[][256],char parole[][256]){
+
+    FILE *fp = fopen("users.txt","w");
+    fprintf(fp,"%s","");
+    fclose(fp);
+ 
+    FILE *fp2 = fopen("users.txt","a");
+
+    for(int i = 1 ; i <= nr ; ++i)
+        fprintf(fp2,"%s",useri[i]);
+    
+
+    fclose(fp2);
+
+    fp = fopen("passwords.txt","w");
+    fprintf(fp,"%s","");
+    fclose(fp);
+ 
+    fp2 = fopen("passwords.txt","a");
+
+    for(int i = 1 ; i <= nr ; ++i)
+        fprintf(fp2,"%s",parole[i]);
+    
+
+    fclose(fp2);
 
 }
 
@@ -223,7 +278,7 @@ void veh_update_status(){
             sageata(pointer_update,auxi);
 
             printf("%d. %s %s %s %s %s\n",i,Masini[i].nume,Masini[i].model,Masini[i].an,
-            Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
+            Masini[i].disponibilitate,Masini[i].pret_per_zi_ron);
 
         }
         printf("\nPagina %d",pagina);
@@ -256,12 +311,12 @@ void veh_update_status(){
             system("cls");
 
             int ok = 0;
-            if(strcmp(Masini[pointer_adevarat].disponibilitare,"Disponibil") == 0){
-                strcpy(Masini[pointer_adevarat].disponibilitare,"Indisponibil");
+            if(strcmp(Masini[pointer_adevarat].disponibilitate,"Disponibil") == 0){
+                strcpy(Masini[pointer_adevarat].disponibilitate,"Indisponibil");
                 ok = 1;
             }
             else
-                strcpy(Masini[pointer_adevarat].disponibilitare,"Disponibil");
+                strcpy(Masini[pointer_adevarat].disponibilitate,"Disponibil");
                     
             if(ok == 1)
                 printf("Status schimbat din \"Disponibil\" in \"Indisponibil\" pentru vehiculul \"%s %s %s\" ",
@@ -317,7 +372,7 @@ void veh_update_price(){
             sageata(pointer_update,auxi);
 
             printf("%d. %s %s %s %s %s\n",i,Masini[i].nume,Masini[i].model,Masini[i].an,
-            Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
+            Masini[i].disponibilitate,Masini[i].pret_per_zi_ron);
 
         }
         printf("\nPagina %d",pagina);
@@ -452,7 +507,7 @@ void sterge_veh(){
             sageata(pointer,auxi);
 
             printf("%d. %s %s %s %s %s\n",i,Masini[i].nume,Masini[i].model,Masini[i].an,
-            Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
+            Masini[i].disponibilitate,Masini[i].pret_per_zi_ron);
 
         }
         printf("\nPagina %d",pagina);
@@ -488,7 +543,7 @@ void sterge_veh(){
             strcpy(saveforoutput[0],Masini[pointer_adevarat].nume);
             strcpy(saveforoutput[1],Masini[pointer_adevarat].model);
             strcpy(saveforoutput[2],Masini[pointer_adevarat].an);
-            strcpy(saveforoutput[3],Masini[pointer_adevarat].disponibilitare);
+            strcpy(saveforoutput[3],Masini[pointer_adevarat].disponibilitate);
             strcpy(saveforoutput[4],Masini[pointer_adevarat].pret_per_zi_ron);
 
             saveforoutput[4][strlen(saveforoutput[4]) - 1] = 0;
@@ -507,7 +562,7 @@ void sterge_veh(){
                     strcpy(Masini[i].nume,Masini[i + 1].nume);
                     strcpy(Masini[i].model,Masini[i + 1].model);
                     strcpy(Masini[i].an,Masini[i + 1].an);
-                    strcpy(Masini[i].disponibilitare,Masini[i + 1].disponibilitare);
+                    strcpy(Masini[i].disponibilitate,Masini[i + 1].disponibilitate);
                     strcpy(Masini[i].pret_per_zi_ron,Masini[i + 1].pret_per_zi_ron);
 
                 }
@@ -530,6 +585,120 @@ void sterge_veh(){
         }   
     }
 }
+void del_user(){
+
+    int stopexec = 0,pointer = 1,next_page;
+
+    int pagina = 1;
+
+    char useri[256][256];
+    char parole[256][256];
+    char linie[256];
+    int nr = 0,nr2 = 0;
+
+    FILE *fp = fopen("users.txt","r");
+    FILE *fp2 = fopen("passwords.txt","r");
+
+    while(fgets(linie,256,fp) != NULL){
+
+        strcpy(useri[++nr],linie);
+
+    }
+    while(fgets(linie,256,fp2) != NULL){
+
+        strcpy(parole[++nr2],linie);
+
+    }
+
+    fclose(fp);
+    fclose(fp2);
+    
+    while(stopexec == 0){
+
+        system("cls");
+
+        printf("=== MENIU DELETE ===\n");
+
+        for(int i = 5 * (pagina - 1) + 1 ; i <= min(5 * pagina,nr) ; ++i){
+
+            int auxi = i % 5;
+            if(auxi == 0)
+                auxi = 5;
+
+            sageata(pointer,auxi);
+
+            printf("%d. %s",i,useri[i]);
+
+        }
+        printf("\nPagina %d",pagina);
+        printf("\n--------------------------\nApasa ESC pentru a iesi...");
+        loopsageata(&pointer,0,min(6,nr - 5 * (pagina - 1) + 1));
+        
+        char tasta = getch();
+
+        if(tasta == 13)
+            next_page = 1;
+        else if(pagina > 1 && tasta == 75)
+            pagina--,pointer = 1;
+        else if((5 * (pagina + 1) <= nr || nr - (5 * pagina) > 0) && tasta == 77)
+            pagina++,pointer = 1;
+        else if(tasta == 80)
+            pointer++;
+        else if(tasta == 72)
+            pointer--;
+        else if(tasta == 27)
+            stopexec = 1;
+
+        system("cls");
+    
+        if(next_page == 1 && pointer >= 1 && pointer <= 5){
+
+            next_page = 0;
+
+            system("cls");
+
+            int pointer_adevarat = 5 * (pagina - 1) + pointer;
+
+            char saveforoutput[30];
+
+            strcpy(saveforoutput,useri[pointer_adevarat]);
+
+            saveforoutput[strlen(saveforoutput) - 1] = 0;
+
+            printf("Sunteti sigur ca doriti sa stergeti user-ul \"%s\" (y/n) : ", saveforoutput);
+
+            char ch = getch();
+
+            printf("%c\n\n", ch);
+
+    
+            if(ch == 'y'){
+
+                for(int i = pointer_adevarat ; i < nr ; ++i)
+                    strcpy(useri[i],useri[i + 1]);
+                
+                for(int i = pointer_adevarat ; i < nr ; ++i)
+                    strcpy(parole[i],parole[i + 1]);
+                
+                nr--;
+                auto_load_users_passwords(nr,useri,parole);
+
+                stopexec = 1;
+
+                printf("User-ul \"%s \" a fost sters cu succes ! ",saveforoutput);
+
+                Sleep(2500);
+            }
+            else{
+                printf("Se reintoarce la ecran anterior...");
+                Sleep(2000);
+            }
+
+
+        }  
+    }
+
+}
 
 void adaugare_actualizare_stergere(){
 
@@ -548,11 +717,14 @@ void adaugare_actualizare_stergere(){
         printf("2. Actualizare autovehicul\n");
 
         sageata(newpointer,3);
-        printf("3. Stergere autovehicul\n\n");
+        printf("3. Stergere autovehicul\n");
+
+        sageata(newpointer,4);
+        printf("4. Stergere User\n\n");
         
         printf("Apasa ESC pentru a iesi");
 
-        loopsageata(&newpointer,0,4);
+        loopsageata(&newpointer,0,5);
 
         optiuni(&newpointer,&stopexec,&nextpage);
 
@@ -579,6 +751,10 @@ void adaugare_actualizare_stergere(){
                 else
                     sterge_veh();
                 
+            }
+            else if(newpointer == 4){
+                system("cls");
+                del_user();
             }
         }
     }
@@ -643,7 +819,7 @@ void listare_stoc_masini(int pagina,int nrMasini,stock Masini[]){
 
         for(int i = 5 * (pagina - 1) + 1 ; i <= min(5 * pagina,nrMasini) ; ++i){
             printf("%d. %s %s %s %s %s\n",i,Masini[i].nume,Masini[i].model,Masini[i].an,
-            Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
+            Masini[i].disponibilitate,Masini[i].pret_per_zi_ron);
         }
 
         printf("\nPagina %d",pagina);
@@ -652,7 +828,7 @@ void listare_stoc_masini(int pagina,int nrMasini,stock Masini[]){
 
         if(pagina > 1 && tasta == 75)
             pagina--;
-        else if(pagina <= (nrMasini / 5) && tasta == 77)
+        else if((5 * (pagina + 1) <= nrMasini || nrMasini - (5 * pagina) > 0) && tasta == 77)
             pagina++;
         else if(tasta == 27)
             return;
@@ -772,20 +948,19 @@ void add_user(){
 
 }
 
-void rent_car(){
+void rent_car(char user[]){
 
-    int stopexec = 0,pointer = 1,next_page = 0;
+    int stopexec_veh = 0,pointer = 1,next_page;
 
     int pagina = 1;
 
-    while(stopexec == 0){
+    while(stopexec_veh == 0){
 
         system("cls");
 
         printf("=== MENIU RENT ===\n");
 
         for(int i = 5 * (pagina - 1) + 1 ; i <= min(5 * pagina,nrMasini) ; ++i){
-
 
             int auxi = i % 5;
             if(auxi == 0)
@@ -794,7 +969,8 @@ void rent_car(){
             sageata(pointer,auxi);
 
             printf("%d. %s %s %s %s %s\n",i,Masini[i].nume,Masini[i].model,Masini[i].an,
-            Masini[i].disponibilitare,Masini[i].pret_per_zi_ron);
+            Masini[i].disponibilitate,Masini[i].pret_per_zi_ron);
+            
 
         }
         printf("\nPagina %d",pagina);
@@ -814,18 +990,251 @@ void rent_car(){
         else if(tasta == 72)
             pointer--;
         else if(tasta == 27)
-            stopexec = 1;
+            stopexec_veh = 1;
 
         system("cls");
-        if(next_page == 1 && pointer >= 1 && pointer <= 5){
 
+        if(next_page == 1 && pointer >= 1 && pointer <= 5 && strcmp(Masini[5 * (pagina - 1) + pointer].disponibilitate,"Disponibil") == 0){
+
+            next_page = 0;
             system("cls");
 
             int pointer_adevarat = 5 * (pagina - 1) + pointer;
+            char pret[30];
+            strcpy(pret,Masini[pointer_adevarat].pret_per_zi_ron);
+            pret[strlen(pret) - 1] = 0;
+            printf("Ati selectat masina : %s %s %s cu pretul pe zi : %s RON\n",
+            Masini[pointer_adevarat].nume,Masini[pointer_adevarat].model,Masini[pointer_adevarat].an,pret);
+
+            char durata[30],telefon[30];
+
+            printf("Introduceti numarul de telefon (exit pentru a iesi) : ");
+            scanf("%[^\n]",telefon);
+            getchar();
+
+            if(strcmp("exit",telefon) == 0)
+                return;
+
+            printf("Durata in zile a contractului (exit pentru a iesi): ");
+            scanf("%[^\n]",durata);
+            getchar();
+
+            if(strcmp("exit",durata) == 0)
+                return;
+
+            strcpy(Oameni[++nrOameni].user,user);
+            strcpy(Oameni[nrOameni].telefon,telefon);
+            strcpy(Oameni[nrOameni].durata_inchieriere_zile,durata);
+
+            strcpy(Masini[pointer_adevarat].disponibilitate,"Indisponibil");
+
+            printf("Cererea de inchiriere a fost transmisa, veti fi contactat de un agent la telefon !");
+
+            
+            FILE *fp = fopen("rent.txt","a");
+
+            fprintf(fp,"%s %s %s %s %s %s %s",Oameni[nrOameni].user,Oameni[nrOameni].telefon,Oameni[nrOameni].durata_inchieriere_zile,
+            Masini[pointer_adevarat].nume,Masini[pointer_adevarat].model,Masini[pointer_adevarat].an,pret);
+            fprintf(fp,"%s","\n");
+
+            fclose(fp);
+
+            auto_load();
+
+            Sleep(5600);
 
         }
+        if(next_page == 1 && pointer >= 1 && pointer <= 5 && strcmp(Masini[5 * (pagina - 1) + pointer].disponibilitate,"Disponibil") != 0){
+            next_page = 0;
+        }
     }
+}
 
+void make_ajutor(char ajutor[],stock Masini){
+
+    strcat(ajutor,Masini.nume);
+    strcat(ajutor," ");
+    strcat(ajutor,Masini.model);
+    strcat(ajutor," ");
+    strcat(ajutor,Masini.an);
+    strcat(ajutor," ");
+    strcat(ajutor,Masini.pret_per_zi_ron);
+    ajutor[strlen(ajutor) - 1] = 0;
+    //printf("%s\n",ajutor);
+
+}
+int check_which_car(char ajutor[],char masina[]){
+
+    for(int i = 0 ; i < strlen(masina) ; ++i){
+        if(strcmp(ajutor,masina + i) == 0)
+            return 1;
+    }
+    return 0;
+
+}
+
+void un_rent_car(char user[]){
+
+    int nr = 0,nr2 = 0;
+    char mat[256][1006];
+    char repune[256][1006];
+    char linie[1006];
+    FILE *fp = fopen("rent.txt","r");
+    while(fgets(linie,1006,fp) != NULL){
+
+        strcpy(repune[++nr2],linie);
+
+        int ok = 1;
+        for(int i = 0 ; user[i] ; ++i)
+            if(user[i] != linie[i])
+                ok = 0;
+            
+        if(ok)
+            strcpy(mat[++nr],linie);
+        
+    }
+    int stopexec = 0,pointer = 1,next_page;
+
+    int pagina = 1;
+
+    while(stopexec == 0){
+
+        system("cls");
+
+        printf("=== MENIU RENT ===\n");
+
+        for(int i = 5 * (pagina - 1) + 1 ; i <= min(5 * pagina,nr) ; ++i){
+
+            int auxi = i % 5;
+            if(auxi == 0)
+                auxi = 5;
+
+            sageata(pointer,auxi);
+
+            printf("%d. %s\n",i,mat[i]);
+            
+        }
+        printf("\nPagina %d",pagina);
+        printf("\n--------------------------\nApasa ESC pentru a iesi...");
+        loopsageata(&pointer,0,min(6,nr - 5 * (pagina - 1) + 1));
+        
+        char tasta = getch();
+
+        if(tasta == 13)
+            next_page = 1;
+        else if(pagina > 1 && tasta == 75)
+            pagina--,pointer = 1;
+        else if((5 * (pagina + 1) <= nr || nr - (5 * pagina) > 0) && tasta == 77)
+            pagina++,pointer = 1;
+        else if(tasta == 80)
+            pointer++;
+        else if(tasta == 72)
+            pointer--;
+        else if(tasta == 27)
+            stopexec = 1;
+
+        system("cls");
+
+        if(next_page == 1 && pointer >= 1 && pointer <= 5){
+
+            next_page = 0;
+            int pointer_adevarat = 5 * (pagina - 1) + pointer;
+            
+            char aux[1006];
+            strcpy(aux,mat[pointer_adevarat]);
+            aux[strlen(aux) - 1] = 0;
+            printf("Sunteti sigur ca doriti sa anulati cererea \"%s\" (y/n) : ",aux);
+            char ch = getch();
+
+            printf("%c\n",ch);
+
+            Sleep(1000);
+
+            if(ch == 'y'){
+
+                int indice = 0;
+                for(int i = 1 ; i <= nr2 ; ++i)
+                    if(strcmp(repune[i],mat[pointer_adevarat]) == 0){
+                        indice = i;
+                        break;
+                    }
+                
+                for(int i = pointer_adevarat ; i <= nr ; ++i)
+                    strcpy(mat[i],mat[i + 1]);
+
+                for(int i = indice ; i <= nr2 ; ++i)
+                    strcpy(repune[i],repune[i + 1]);
+                
+                nr2--;
+                nr--;
+
+                FILE *fp = fopen("rent.txt","w");
+                fprintf(fp,"%s","");
+
+                fclose(fp);
+
+                FILE *fp2 = fopen("rent.txt","a");
+
+                for(int i = 1 ; i <= nr2 ; ++i)
+                    fprintf(fp2,"%s",repune[i]);
+                
+                fclose(fp2);
+
+                for(int i = 1 ; i <= nrMasini ; ++i){
+                    char ajutor[256] = {0};
+                    make_ajutor(ajutor,Masini[i]);
+                    if(check_which_car(ajutor,aux) == 1){
+                        strcpy(Masini[i].disponibilitate,"Disponibil");
+                        break;
+                    }
+                }
+                auto_load();
+                printf("Cererea a fost anulata !");
+                Sleep(3500);
+
+
+            }
+            else{
+                printf("Se reintoarce la meniu anterior");
+                Sleep(3000);
+            }
+        }
+    }
+}
+
+void meniu_rent(char user[]){
+
+    int pos = 1,stopexec = 0,nextpage = 0;
+
+    while(stopexec == 0){
+
+        system("cls");
+        printf("=== MENIU RENT ===\n");
+
+        sageata(pos,1);
+        printf("1. Inchiriaza\n");
+
+        sageata(pos,2);
+        printf("2. Renuntare cerere inchiriere\n\n");
+
+        printf("Apasa ESC pentru a iesi...");
+        
+        loopsageata(&pos,0,3);
+
+        optiuni(&pos,&stopexec,&nextpage);
+
+        if(nextpage == 1){
+            nextpage = 0;
+            if(pos == 1){
+                system("cls");
+                rent_car(user);
+            }
+            else if(pos == 2){
+                system("cls");
+                un_rent_car(user);
+            }
+        }
+    }
 }
 
 void log_in_user(){
@@ -913,7 +1322,7 @@ void log_in_user(){
             printf("Logat cu succes !\n");
             printf("Redirectionare automata spre pagina de rent...");
             Sleep(3500);
-            rent_car();
+            meniu_rent(user);
             break;
         }
         else{
@@ -1075,8 +1484,9 @@ void clear_data(){
 
 int main(){
 
+    //Sleep(8000);
     system("cls");
-
+    
     int stopexec = 0;
     int pos = 1,nextpage,previouspage;
 
@@ -1093,6 +1503,7 @@ int main(){
     fclose(pp);
 
     load_from_file_car_stock();
+    load_from_file_people();
     
     while(stopexec == 0){  
 
@@ -1106,7 +1517,7 @@ int main(){
         printf("2. Inchiriere\n");
 
         sageata(pos, 3);
-        printf("3. Functii Autoturisme [ADMIN ONLY]\n");
+        printf("3. Functii Admin [ADMIN ONLY]\n");
 
         sageata(pos, 4);
         printf("4. Admin Help [ADMIN ONLY]\n");
