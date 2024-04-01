@@ -31,10 +31,28 @@ om Oameni[1005];
 int nrMasini,nrOameni;
 int blocheaza_stergere;
 
+void coloredtext(WORD Culoare,char text[]){
+
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+    WORD saved_attributes;
+
+    GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
+    saved_attributes = consoleInfo.wAttributes;
+
+    SetConsoleTextAttribute(hConsole, Culoare);
+    
+    printf("%s",text);    
+
+    SetConsoleTextAttribute(hConsole, saved_attributes);
+
+}
+
 void admin_help(){
 
     char pass[26];
-    printf("=== MENIU ADMIN ===\n");
+    
+    coloredtext(FOREGROUND_GREEN,"=== MENIU ADMIN ===\n");
     int try = 3;
     int intrat = 0;
     while(try > 0 && intrat == 0){
@@ -52,7 +70,7 @@ void admin_help(){
                 i -= 2;
             }
             else
-                printf("*");
+                coloredtext(FOREGROUND_RED,"*");
 
             i++;
         }
@@ -61,19 +79,20 @@ void admin_help(){
         if(strcmp(pass,"admin123") == 0){
             intrat = 1;
             system("cls");
-            printf("Informatii pentru membrii staff \n");
+            coloredtext(FOREGROUND_RED,"Informatii pentru membrii staff \n");
             printf("Sintaxa adaugare : NUME | MODEL | AN | DISPONIBIL/INDISPONIBIL | PRET_PER_ZI\n");
             printf("Se pune 1 singur spatiu intre campurile de completat al masinilor\n");
             printf("Pentru modele ce sunt compuse din mai multe cuvinte, se folosesc separatori (\"-\",\"_\")\n");
             printf("Orice neclaritate raportati la manager\n");
             printf("Aplicatia este in teste, pot aparea erori. Reporniti daca se blocheaza\n");
             printf("Parola si PIN-ul de admin se primesc fizic de la manager\n");
-            printf("Daca introduceti codul PIN gresit sau parola apelati la supervizor pentru deblocare\n\n");
+            coloredtext(FOREGROUND_RED,"Daca introduceti codul PIN gresit sau parola apelati la supervizor pentru deblocare\n\n");
 
+            coloredtext(FOREGROUND_GREEN,"Folositi \"exit\" pentru a iesi din programe\n\n");
+            
 
-            printf("Folositi \"exit\" pentru a iesi din programe\n\n");
-
-            printf("\n--------------------------\nApasa ESC pentru a iesi...");
+            printf("\n--------------------------\n");
+            coloredtext(FOREGROUND_RED,"Apasa ESC pentru a iesi...");
             char tasta = getch();
 
             while(tasta != 27)
@@ -86,13 +105,13 @@ void admin_help(){
         else if(strcmp(pass,"exit") == 0)
             return;
         else{
-            printf("\nParola gresita\n");
+            coloredtext(FOREGROUND_RED,"\nParola gresita !\n");
             printf("Incercari ramase %d\n\n",try - 1);
         }
         try--;
     }
     if(!intrat){
-        printf("\nParola gresita, se reintoarce la ecran principal in 5 sau mai putine secunde");
+        coloredtext(FOREGROUND_RED,"\nParola gresita, se reintoarce la ecran principal in 5 sau mai putine secunde");
         Sleep(5600);
     }
 
@@ -252,7 +271,12 @@ void adauga_veh(){
         Sleep(400);
 
         system("cls");
-        printf("Vehiculul \"%s\" a fost adaugat cu succes !",newcar);
+        char aux[256];
+        strcpy(aux,"Vehiculul \"");
+        strcat(aux,newcar);
+        strcat(aux,"\" a fost adaugat cu succes !");
+        coloredtext(FOREGROUND_GREEN,aux);
+        
 
         Sleep(2500);
         
@@ -267,8 +291,8 @@ void veh_update_status(){
 
         system("cls");
 
-        printf("=== MENIU UPDATE ===\n");
-
+        coloredtext(FOREGROUND_GREEN,"=== MENIU UPDATE ===\n");
+        
         for(int i = 5 * (pagina - 1) + 1 ; i <= min(5 * pagina,nrMasini) ; ++i){
 
             int auxi = i % 5;
@@ -282,7 +306,8 @@ void veh_update_status(){
 
         }
         printf("\nPagina %d",pagina);
-        printf("\n--------------------------\nApasa ESC pentru a iesi...");
+        printf("\n--------------------------\n");
+        coloredtext(FOREGROUND_RED,"Apasa ESC pentru a iesi...");
         loopsageata(&pointer_update,0,min(6,nrMasini - 5 * (pagina - 1) + 1));
         
         char tasta = getch();
@@ -318,12 +343,28 @@ void veh_update_status(){
             else
                 strcpy(Masini[pointer_adevarat].disponibilitate,"Disponibil");
                     
-            if(ok == 1)
-                printf("Status schimbat din \"Disponibil\" in \"Indisponibil\" pentru vehiculul \"%s %s %s\" ",
-                Masini[pointer_adevarat].nume,Masini[pointer_adevarat].model,Masini[pointer_adevarat].an);
-            else if(ok == 0)
-                printf("Status schimbat din \"Indisponibil\" in \"Disponibil\" pentru vehiculul \"%s %s %s\" ",
-                Masini[pointer_adevarat].nume,Masini[pointer_adevarat].model,Masini[pointer_adevarat].an);
+            if(ok == 1){
+                char aux[256];
+                strcpy(aux,"Status schimbat din \"Disponibil\" in \"Indisponibil\" pentru vehiculul ");
+                strcat(aux,Masini[pointer_adevarat].nume);
+                strcat(aux," ");
+                strcat(aux,Masini[pointer_adevarat].model);
+                strcat(aux," ");
+                strcat(aux,Masini[pointer_adevarat].an);
+                
+                coloredtext(FOREGROUND_GREEN,aux);
+            }
+            else if(ok == 0){
+                char aux[256];
+                strcpy(aux,"Status schimbat din \"Indisponibil\" in \"Disponibil\" pentru vehiculul ");
+                strcat(aux,Masini[pointer_adevarat].nume);
+                strcat(aux," ");
+                strcat(aux,Masini[pointer_adevarat].model);
+                strcat(aux," ");
+                strcat(aux,Masini[pointer_adevarat].an);
+                
+                coloredtext(FOREGROUND_GREEN,aux);
+            }
 
             auto_load();
 
@@ -361,8 +402,7 @@ void veh_update_price(){
 
         system("cls");
 
-        printf("=== MENIU UPDATE ===\n");
-
+        coloredtext(FOREGROUND_GREEN,"=== MENIU UPDATE ===\n");
         for(int i = 5 * (pagina - 1) + 1 ; i <= min(5 * pagina,nrMasini) ; ++i){
 
             int auxi = i % 5;
@@ -376,7 +416,8 @@ void veh_update_price(){
 
         }
         printf("\nPagina %d",pagina);
-        printf("\n--------------------------\nApasa ESC pentru a iesi...");
+        printf("\n--------------------------\n");
+        coloredtext(FOREGROUND_RED,"Apasa ESC pentru a iesi...");
         loopsageata(&pointer_update,0,min(6,nrMasini - 5 * (pagina - 1) + 1));
         
         char tasta = getch();
@@ -423,7 +464,7 @@ void veh_update_price(){
                 
                 ok = verifpret(pret);
                 if(ok == 0)
-                    printf("Pret in format incorect, reincearca : ");
+                    coloredtext(FOREGROUND_RED,"Pret in format incorect, reincearca : ");
             }
 
             if(iesi == 0){
@@ -441,7 +482,8 @@ void veh_update_price(){
                 
                 auto_load();
 
-                printf("Pret actualizat cu succes");
+            
+                coloredtext(FOREGROUND_GREEN,"Pret actualizat cu succes ! ");
 
                 Sleep(2500);
             }
@@ -458,7 +500,7 @@ void actualizeaza_veh(){
         
         system("cls");
 
-        printf("=== MENIU UPDATE ===\n");
+        coloredtext(FOREGROUND_GREEN,"=== MENIU UPDATE ===\n");
 
         sageata(pointer,1);
         printf("1. Disponibilitate\n");
@@ -466,7 +508,7 @@ void actualizeaza_veh(){
         sageata(pointer,2);
         printf("2. Pret\n\n");
         
-        printf("Apasa ESC pentru a iesi");
+        coloredtext(FOREGROUND_RED,"Apasa ESC pentru a iesi...");
         loopsageata(&pointer,0,3);
 
         optiuni(&pointer,&stopexec_veh,&next_page);
@@ -495,8 +537,8 @@ void sterge_veh(){
 
         system("cls");
 
-        printf("=== MENIU DELETE ===\n");
-
+        coloredtext(FOREGROUND_GREEN,"=== MENIU DELETE ===\n");
+    
         for(int i = 5 * (pagina - 1) + 1 ; i <= min(5 * pagina,nrMasini) ; ++i){
 
 
@@ -511,7 +553,8 @@ void sterge_veh(){
 
         }
         printf("\nPagina %d",pagina);
-        printf("\n--------------------------\nApasa ESC pentru a iesi...");
+        printf("\n--------------------------\n");
+        coloredtext(FOREGROUND_RED,"Apasa ESC pentru a iesi...");
         loopsageata(&pointer,0,min(6,nrMasini - 5 * (pagina - 1) + 1));
         
         char tasta = getch();
@@ -573,8 +616,20 @@ void sterge_veh(){
                 
                 stopexec_veh = 1;
 
-                printf("Vehiculul \"%s %s %s %s %s\" a fost sters cu succes ! ",saveforoutput[0],saveforoutput[1],saveforoutput[2]
-                ,saveforoutput[3],saveforoutput[4]);
+                char aux[256];
+                strcpy(aux,"Vehiculul \"");
+                strcat(aux,saveforoutput[0]);
+                strcat(aux," ");
+                strcat(aux,saveforoutput[1]);
+                strcat(aux," ");
+                strcat(aux,saveforoutput[2]);
+                strcat(aux," ");
+                strcat(aux,saveforoutput[3]);
+                strcat(aux," ");
+                strcat(aux,saveforoutput[4]);
+                strcat(aux,"\" a fost sters cu succes ! ");
+
+                coloredtext(FOREGROUND_GREEN,aux);
 
                 Sleep(2500);
             }
@@ -617,7 +672,7 @@ void del_user(){
 
         system("cls");
 
-        printf("=== MENIU DELETE ===\n");
+        coloredtext(FOREGROUND_GREEN,"=== MENIU DELETE ===\n");
 
         for(int i = 5 * (pagina - 1) + 1 ; i <= min(5 * pagina,nr) ; ++i){
 
@@ -631,7 +686,8 @@ void del_user(){
 
         }
         printf("\nPagina %d",pagina);
-        printf("\n--------------------------\nApasa ESC pentru a iesi...");
+        printf("\n--------------------------\n");
+        coloredtext(FOREGROUND_RED,"Apasa ESC pentru a iesi...");
         loopsageata(&pointer,0,min(6,nr - 5 * (pagina - 1) + 1));
         
         char tasta = getch();
@@ -685,7 +741,11 @@ void del_user(){
 
                 stopexec = 1;
 
-                printf("User-ul \"%s \" a fost sters cu succes ! ",saveforoutput);
+                char aux[256];
+                strcpy(aux,"User-ul \"");
+                strcat(aux,saveforoutput);
+                strcat(aux,"\" a fost sters cu succes ! ");
+                coloredtext(FOREGROUND_GREEN,aux);
 
                 Sleep(2500);
             }
@@ -709,7 +769,7 @@ void adaugare_actualizare_stergere(){
 
         system("cls");
 
-        printf("=== MENIU ADMIN ===\n");
+        coloredtext(FOREGROUND_GREEN,"=== MENIU ADMIN ===\n");
         sageata(newpointer, 1);
         printf("1. Adauga autovehicul\n");
 
@@ -722,7 +782,7 @@ void adaugare_actualizare_stergere(){
         sageata(newpointer,4);
         printf("4. Stergere User\n\n");
         
-        printf("Apasa ESC pentru a iesi");
+        coloredtext(FOREGROUND_RED,"Apasa ESC pentru a iesi...");
 
         loopsageata(&newpointer,0,5);
 
@@ -745,7 +805,7 @@ void adaugare_actualizare_stergere(){
                 newpointer = 0;
                 system("cls");
                 if(nrMasini == 0){
-                    printf("Inventar gol...");
+                    coloredtext(FOREGROUND_RED,"Inventar gol...");
                     Sleep(2500);
                 }
                 else
@@ -762,7 +822,7 @@ void adaugare_actualizare_stergere(){
 void solve_admin_page(){
 
     char pass[26];
-    printf("=== MENIU ADMIN ===\n");
+    coloredtext(FOREGROUND_GREEN,"=== MENIU ADMIN ===\n");
         if(blocheaza_stergere == 0){
         int try = 3;
         int intrat = 0;
@@ -781,7 +841,7 @@ void solve_admin_page(){
                     i -= 2;
                 }
                 else
-                    printf("*");
+                    coloredtext(FOREGROUND_RED,"*");
 
                 i++;
             }
@@ -795,18 +855,18 @@ void solve_admin_page(){
             else if(strcmp(pass,"exit") == 0)
                 return;
             else{
-                printf("\nParola gresita\n");
+                coloredtext(FOREGROUND_RED,"\nParola gresita\n");
                 printf("Incercari ramase %d\n\n",try - 1);
             }
             try--;
         }
         if(!intrat){
-            printf("\nParola gresita, se reintoarce la ecran principal in 5 sau mai putine secunde");
+            coloredtext(FOREGROUND_RED,"\nParola gresita, se reintoarce la ecran principal in 5 sau mai putine secunde");
             Sleep(5600);
         }
     }
     else{
-        printf("Functii blocate(PIN Gresit)");
+        coloredtext(FOREGROUND_RED,"Functii blocate(PIN Gresit)");
         Sleep(3500);
     }
 
@@ -823,7 +883,8 @@ void listare_stoc_masini(int pagina,int nrMasini,stock Masini[]){
         }
 
         printf("\nPagina %d",pagina);
-        printf("\n--------------------------\nApasa ESC pentru a iesi...");
+        printf("\n--------------------------\n");
+        coloredtext(FOREGROUND_RED,"Apasa ESC pentru a iesi...");
         char tasta = getch();
 
         if(pagina > 1 && tasta == 75)
@@ -892,7 +953,7 @@ void add_user(){
         if(ok == 0)
             break;
         else{
-            printf("Nume de utilizator deja folosit\n\n");
+            coloredtext(FOREGROUND_RED,"Nume de utilizator deja folosit\n\n");
             printf("Introdu numele de utilizator : ");
             scanf("%[^\n]",user);
             getchar();
@@ -918,7 +979,7 @@ void add_user(){
             i -= 2;
         }
         else
-            printf("*");
+            coloredtext(FOREGROUND_RED,"*");
 
         i++;
     }
@@ -943,7 +1004,8 @@ void add_user(){
     fclose(fp3);
 
     system("cls");
-    printf("Utilizator creat cu succes !");
+    
+    coloredtext(FOREGROUND_GREEN,"Utilizator creat cu succes !");
     Sleep(2500);
 
 }
@@ -958,7 +1020,7 @@ void rent_car(char user[]){
 
         system("cls");
 
-        printf("=== MENIU RENT ===\n");
+        coloredtext(FOREGROUND_GREEN,"=== MENIU RENT ===\n");
 
         for(int i = 5 * (pagina - 1) + 1 ; i <= min(5 * pagina,nrMasini) ; ++i){
 
@@ -974,7 +1036,8 @@ void rent_car(char user[]){
 
         }
         printf("\nPagina %d",pagina);
-        printf("\n--------------------------\nApasa ESC pentru a iesi...");
+        printf("\n--------------------------\n");
+        coloredtext(FOREGROUND_RED,"Apasa ESC pentru a iesi...");
         loopsageata(&pointer,0,min(6,nrMasini - 5 * (pagina - 1) + 1));
         
         char tasta = getch();
@@ -1028,9 +1091,8 @@ void rent_car(char user[]){
 
             strcpy(Masini[pointer_adevarat].disponibilitate,"Indisponibil");
 
-            printf("Cererea de inchiriere a fost transmisa, veti fi contactat de un agent la telefon !");
-
-            
+            coloredtext(FOREGROUND_GREEN,"Cererea de inchiriere a fost transmisa, veti fi contactat de un agent la telefon !");
+        
             FILE *fp = fopen("rent.txt","a");
 
             fprintf(fp,"%s %s %s %s %s %s %s",Oameni[nrOameni].user,Oameni[nrOameni].telefon,Oameni[nrOameni].durata_inchieriere_zile,
@@ -1045,6 +1107,9 @@ void rent_car(char user[]){
 
         }
         if(next_page == 1 && pointer >= 1 && pointer <= 5 && strcmp(Masini[5 * (pagina - 1) + pointer].disponibilitate,"Disponibil") != 0){
+            system("cls");
+            coloredtext(FOREGROUND_RED,"Masina este deja inchiriata sau este indisponibila momentan...");
+            Sleep(3000);
             next_page = 0;
         }
     }
@@ -1085,9 +1150,10 @@ void un_rent_car(char user[]){
         strcpy(repune[++nr2],linie);
 
         int ok = 1;
-        for(int i = 0 ; user[i] ; ++i)
+        for(int i = 0 ; user[i] ; ++i){ /// Rezolva bugu cu Andrei - Andrei Gaspar
             if(user[i] != linie[i])
                 ok = 0;
+        }
             
         if(ok)
             strcpy(mat[++nr],linie);
@@ -1101,7 +1167,7 @@ void un_rent_car(char user[]){
 
         system("cls");
 
-        printf("=== MENIU RENT ===\n");
+        coloredtext(FOREGROUND_GREEN,"=== MENIU RENT ===\n");
 
         for(int i = 5 * (pagina - 1) + 1 ; i <= min(5 * pagina,nr) ; ++i){
 
@@ -1115,7 +1181,8 @@ void un_rent_car(char user[]){
             
         }
         printf("\nPagina %d",pagina);
-        printf("\n--------------------------\nApasa ESC pentru a iesi...");
+        printf("\n--------------------------\n");
+        coloredtext(FOREGROUND_RED,"Apasa ESC pentru a iesi...");
         loopsageata(&pointer,0,min(6,nr - 5 * (pagina - 1) + 1));
         
         char tasta = getch();
@@ -1189,7 +1256,7 @@ void un_rent_car(char user[]){
                     }
                 }
                 auto_load();
-                printf("Cererea a fost anulata !");
+                coloredtext(FOREGROUND_GREEN,"Cererea a fost anulata !");
                 Sleep(3500);
 
 
@@ -1209,7 +1276,7 @@ void meniu_rent(char user[]){
     while(stopexec == 0){
 
         system("cls");
-        printf("=== MENIU RENT ===\n");
+        coloredtext(FOREGROUND_GREEN,"=== MENIU RENT ===\n");
 
         sageata(pos,1);
         printf("1. Inchiriaza\n");
@@ -1217,7 +1284,7 @@ void meniu_rent(char user[]){
         sageata(pos,2);
         printf("2. Renuntare cerere inchiriere\n\n");
 
-        printf("Apasa ESC pentru a iesi...");
+        coloredtext(FOREGROUND_RED,"Apasa ESC pentru a iesi...");
         
         loopsageata(&pos,0,3);
 
@@ -1272,7 +1339,7 @@ void log_in_user(){
         if(ok == 1)
             break;
         else{
-            printf("Utilizator incorect\n");
+            coloredtext(FOREGROUND_RED,"Utilizator incorect\n");
             printf("Introdu numele de utilizator : ");
             scanf("%[^\n]",user);
             getchar();
@@ -1298,7 +1365,7 @@ void log_in_user(){
             i -= 2;
         }
         else
-            printf("*");
+            coloredtext(FOREGROUND_RED,"*");
 
         i++;
     }
@@ -1319,14 +1386,15 @@ void log_in_user(){
     while(1){
         if(strcmp(linie,pass) == 0){
             system("cls");
-            printf("Logat cu succes !\n");
+            coloredtext(FOREGROUND_GREEN,"Logat cu succes !\n");
+            
             printf("Redirectionare automata spre pagina de rent...");
             Sleep(3500);
             meniu_rent(user);
             break;
         }
         else{
-            printf("\nParola gresita, reincearca : ");
+            coloredtext(FOREGROUND_RED,"\nParola gresita, reincearca : ");
             int i = 0;
             while(1){
                 
@@ -1344,7 +1412,8 @@ void log_in_user(){
                     i -= 2;
                 }
                 else
-                    printf("*");
+                    coloredtext(FOREGROUND_RED,"*");
+                
 
                 i++;
             }
@@ -1362,7 +1431,7 @@ void inchiriaza_vehicul(){
     while(stopexec == 0){
 
         system("cls");
-        printf("=== MENIU USER ===\n");
+        coloredtext(FOREGROUND_GREEN,"=== MENIU USER ===\n");
 
         sageata(pos,1);
         printf("1. Utilizator Nou\n");
@@ -1370,7 +1439,7 @@ void inchiriaza_vehicul(){
         sageata(pos,2);
         printf("2. Utilizator Existent\n\n");
 
-        printf("Apasa ESC pentru a iesi");
+        coloredtext(FOREGROUND_RED,"Apasa ESC pentru a iesi...");
         
         loopsageata(&pos,0,3);
 
@@ -1394,7 +1463,7 @@ void inchiriaza_vehicul(){
 void clear_data(){
 
     char pass[26];
-    printf("=== MENIU ADMIN ===\n");
+    coloredtext(FOREGROUND_GREEN,"=== MENIU ADMIN ===\n");
     int try = 3;
     int intrat = 0;
     while(try > 0 && intrat == 0){
@@ -1412,7 +1481,7 @@ void clear_data(){
                 i -= 2;
             }
             else
-                printf("*");
+                coloredtext(FOREGROUND_RED,"*");
 
             i++;
         }
@@ -1450,13 +1519,14 @@ void clear_data(){
                     FILE *fp = fopen("masini.txt","w");
                     fprintf(fp,"%s","");
                     load_from_file_car_stock();
-                    printf("Fisierul a fost golit cu succes.\nSe revine la meniul principal in 5 sau mai putine secunde...");
+                    coloredtext(FOREGROUND_GREEN,"Fisierul a fost golit cu succes.\nSe revine la meniul principal in 5 sau mai putine secunde...");
+
                     Sleep(5600);
                     return;
                 }
                 else{
                     blocheaza_stergere = 1;
-                    printf("PIN gresit, se revine la meniu principal");
+                    coloredtext(FOREGROUND_RED,"PIN gresit, se revine la meniu principal");
                     Sleep(5600);
                     return;
                 }
@@ -1470,13 +1540,13 @@ void clear_data(){
         else if(strcmp(pass,"exit") == 0)
             return;
         else{
-            printf("\nParola gresita\n");
+            coloredtext(FOREGROUND_RED,"\nParola gresita\n");
             printf("Incercari ramase %d\n\n",try - 1);
         }
         try--;
     }
     if(!intrat){
-        printf("\nParola gresita, se reintoarce la ecran principal in 5 sau mai putine secunde");
+        coloredtext(FOREGROUND_RED,"\nParola gresita, se reintoarce la ecran principal in 5 sau mai putine secunde");
         Sleep(5600);
     }
 
@@ -1508,7 +1578,7 @@ int main(){
     while(stopexec == 0){  
 
         system("cls");
-        printf("=== MENIU PRINCIPAL ===\n");
+        coloredtext(FOREGROUND_GREEN,"=== MENIU PRINCIPAL ===\n");
 
         sageata(pos,1);
         printf("1. Vizualizare Autoturisme\n");
@@ -1528,7 +1598,7 @@ int main(){
         sageata(pos, 6);
         printf("6. Deblocare aplicatie [ADMIN ONLY]\n\n");
 
-        printf("Apasa ESC pentru a iesi");
+        coloredtext(FOREGROUND_RED,"Apasa ESC pentru a iesi...");
         
         loopsageata(&pos,0,7);
 
@@ -1539,7 +1609,7 @@ int main(){
             printf("Sunteti sigur ca doriti sa inchideti aplicatia ? (y/n) :");
             char c = getch();
             if(c == 'y'){
-                printf("\n\nAplicatia se va inchide in cateva secunde");
+                coloredtext(FOREGROUND_GREEN,"\n\nAplicatia se va inchide in cateva secunde");
                 Sleep(2600);
                 stopexec = 1;
             }
@@ -1625,7 +1695,7 @@ int main(){
                     }
                     else{
                         if(strcmp(PIN,"1111") == 0){
-                            printf("Functii deblocate!");
+                            coloredtext(FOREGROUND_GREEN,"Functii deblocate!");
                             FILE *pp = fopen("status_functie_5.txt","w");
                             fprintf(pp,"%d",0);
                             blocheaza_stergere = 0;
@@ -1633,14 +1703,14 @@ int main(){
                             Sleep(2000);
                         }
                         else
-                            printf("PIN Gresit. Incearca din nou...\n");
+                            coloredtext(FOREGROUND_RED,"PIN Gresit. Incearca din nou...\n");
                         
                     }
                 }while(ok == 0);
             }
             else if(pos == 6 && blocheaza_stergere == 0){
                 system("cls");
-                printf("Functiile nu sunt blocate");
+                coloredtext(FOREGROUND_RED,"Functiile nu sunt blocate");
                 Sleep(2500);
             }
             
