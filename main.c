@@ -1095,7 +1095,7 @@ void rent_car(char user[]){
         
             FILE *fp = fopen("rent.txt","a");
 
-            fprintf(fp,"%s %s %s %s %s %s %s",Oameni[nrOameni].user,Oameni[nrOameni].telefon,Oameni[nrOameni].durata_inchieriere_zile,
+            fprintf(fp,"%s| %s %s %s %s %s %s",Oameni[nrOameni].user,Oameni[nrOameni].telefon,Oameni[nrOameni].durata_inchieriere_zile,
             Masini[pointer_adevarat].nume,Masini[pointer_adevarat].model,Masini[pointer_adevarat].an,pret);
             fprintf(fp,"%s","\n");
 
@@ -1149,12 +1149,13 @@ void un_rent_car(char user[]){
 
         strcpy(repune[++nr2],linie);
 
-        int ok = 1;
-        for(int i = 0 ; user[i] ; ++i){ /// Rezolva bugu cu Andrei - Andrei Gaspar
-            if(user[i] != linie[i])
-                ok = 0;
-        }
-            
+        int ok = 0;
+        char aux[256];
+        strcpy(aux,linie);
+        char *p = strtok(aux,"|");
+        if(strcmp(p,user) == 0)
+            ok = 1;
+    
         if(ok)
             strcpy(mat[++nr],linie);
         
