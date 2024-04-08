@@ -120,29 +120,38 @@ void admin_help(){
 void load_from_file_car_stock(){
 
     FILE *fp = fopen("masini.txt","r");
-    char linie[256];
-    char mat[256][256];
-    nrMasini = 0;
-    while(fgets(linie,256,fp) != NULL){
 
-        //printf("%s",linie);
-        strcpy(mat[++nrMasini],linie);
-    
+    if(fp == NULL){
+        printf("Fisierul masini.txt nu este creat !");
+        Sleep(5000);
+        fclose(fp);
+        exit(0);
     }
-    for(int i = 1 ; i <= nrMasini ; ++i){
-        char *p = strtok(mat[i]," ");
-        strcpy(Masini[i].nume,p);
-        p = strtok(NULL," ");
-        strcpy(Masini[i].model,p);
-        p = strtok(NULL," ");
-        strcpy(Masini[i].an,p);
-        p = strtok(NULL," ");
-        strcpy(Masini[i].disponibilitate,p);
-        p = strtok(NULL," ");
-        strcpy(Masini[i].pret_per_zi_ron,p);
+    else{
+        char linie[256];
+        char mat[256][256];
+        nrMasini = 0;
+        while(fgets(linie,256,fp) != NULL){
+
+            //printf("%s",linie);
+            strcpy(mat[++nrMasini],linie);
+        
+        }
+        for(int i = 1 ; i <= nrMasini ; ++i){
+            char *p = strtok(mat[i]," ");
+            strcpy(Masini[i].nume,p);
+            p = strtok(NULL," ");
+            strcpy(Masini[i].model,p);
+            p = strtok(NULL," ");
+            strcpy(Masini[i].an,p);
+            p = strtok(NULL," ");
+            strcpy(Masini[i].disponibilitate,p);
+            p = strtok(NULL," ");
+            strcpy(Masini[i].pret_per_zi_ron,p);
+        }
+        
+        fclose(fp);
     }
-    
-    fclose(fp);
 }
 void load_from_file_people(){
 
@@ -150,23 +159,32 @@ void load_from_file_people(){
     char linie[256];
     char mat[256][256];
     nrOameni = 0;
-    while(fgets(linie,256,fp2) != NULL){
 
-        //printf("%s",linie);
-        strcpy(mat[++nrOameni],linie);
-    
+    if(fp2 == NULL){
+        printf("Fisierul rent.txt nu este creat !");
+        Sleep(5000);
+        fclose(fp2);
+        exit(0);
     }
-    for(int i = 1 ; i <= nrOameni ; ++i){
-        char *p = strtok(mat[i]," ");
-        strcpy(Oameni[i].user,p);
-        p = strtok(NULL," ");
-        strcpy(Oameni[i].telefon,p);
-        p = strtok(NULL," ");
-        strcpy(Oameni[i].durata_inchieriere_zile,p);
-        p = strtok(NULL," ");
+    else{
+        while(fgets(linie,256,fp2) != NULL){
+
+            //printf("%s",linie);
+            strcpy(mat[++nrOameni],linie);
         
+        }
+        for(int i = 1 ; i <= nrOameni ; ++i){
+            char *p = strtok(mat[i]," ");
+            strcpy(Oameni[i].user,p);
+            p = strtok(NULL," ");
+            strcpy(Oameni[i].telefon,p);
+            p = strtok(NULL," ");
+            strcpy(Oameni[i].durata_inchieriere_zile,p);
+            p = strtok(NULL," ");
+            
+        }
+        fclose(fp2);
     }
-    fclose(fp2);
 }
 
 void auto_load(){
