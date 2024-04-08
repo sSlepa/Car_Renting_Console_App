@@ -122,7 +122,7 @@ void load_from_file_car_stock(){
     FILE *fp = fopen("masini.txt","r");
 
     if(fp == NULL){
-        printf("Fisierul masini.txt nu este creat !");
+        coloredtext(FOREGROUND_RED,"Fisierul masini.txt nu este creat !");
         Sleep(5000);
         fclose(fp);
         exit(0);
@@ -161,7 +161,7 @@ void load_from_file_people(){
     nrOameni = 0;
 
     if(fp2 == NULL){
-        printf("Fisierul rent.txt nu este creat !");
+        coloredtext(FOREGROUND_RED,"Fisierul rent.txt nu este creat !");
         Sleep(5000);
         fclose(fp2);
         exit(0);
