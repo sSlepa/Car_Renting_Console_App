@@ -27,6 +27,6 @@ This project is a robust automotive renting platform built using C and C++.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/automotive-classifieds-app.git
+   git clone https://github.com/yourusername/automotive-classifieds-app](https://github.com/sSlepa/Car_Renting_Console_App.git
     ```
 2. Compile the C file into .exe and run.
